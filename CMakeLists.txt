@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(mhe)
+project (mhe)
 
 set(CMAKE_CXX_STANDARD 17)
 
