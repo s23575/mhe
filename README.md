@@ -10,4 +10,16 @@ MHE Zaoczne 2023: problem kliki
     [brak wypukłości]
     [brak różniczkowalności]
 
-[Funkcja celu: liczba wierzchołków]
+[Funkcja celu: liczba wierzchołków "każdy z każdym"]
+
+[Brutalna siła: policzenie wierzchołków "każdy z każdym" w każdym podzbiorze (2^n)]
+
+[Algorytm wspinaczkowy: sąsiedztwo: zamiana dwóch wierzchołków w losowo wybranym podzbiorze]
+
+[Prezentacja podzbioru przy pomocy funkcji charakterystycznej]
+
+[Prezentacja grafu w formie macierzy]
+
+[Krawędzie]
+
+[Dwa możliwe rozwiązania: wielkość kliki lub najmniejszy podzbiór o wielkości kliki]
