@@ -3,6 +3,7 @@
 #include <string>
 #include <iomanip>
 #include <random>
+#include <algorithm>
 
 // <-- Generator liczb pseudolosowych
 std::random_device rd;
@@ -29,6 +30,10 @@ struct graph_t {
             set_k_edges_num();
     }
 
+    void set_indicator(int i) {
+        indicators[i].flip();
+    }
+
     void set_vertices() {
         for (int i = 0; i < size; i++) vertices.push_back(i);
     }
@@ -36,7 +41,7 @@ struct graph_t {
     void set_edges() {
         std::uniform_int_distribution<int> distr(0, 1);
         bool b;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) { // TODO do... while... dopoki nie ma minimalnej liczby krawedzi
             edges.emplace_back();
             for (int j = 0; j < size; j++) {
                 if (j == i) edges[i].push_back(false);
@@ -69,25 +74,14 @@ struct graph_t {
         k_edges_num = (static_cast<int>(indicators_num) * (static_cast<int>(indicators_num) - 1)) / 2;
     }
 
-    [[nodiscard]] double get_goal() const {
+    double get_goal() {
+        this -> set_indicators_num(),
+                set_edges_num(),
+                set_k_edges_num();
         return (static_cast<int>(indicators_num) - (k_edges_num - edges_num)) * 1000
                * ((double)edges_num / (double)k_edges_num);
     }
 
-
-    void remove_vertex (int vertex_to_remove) { // TODO Dorobic sprawdzanie, czy vertex istnieje (1), czy jest 0/1 i skrocic
-        indicators[vertex_to_remove] = false;
-        this -> set_indicators_num(),
-                set_edges_num(),
-                set_k_edges_num();
-    }
-
-    void add_vertex (int vertex_to_add) { // TODO Dorobic sprawdzanie, czy vertex istnieje (2), czy jest 0/1 i skrocic
-        indicators[vertex_to_add] = true;
-        this -> set_indicators_num(),
-                set_edges_num(),
-                set_k_edges_num();
-    }
 };
 
 std::ostream &operator<<(std::ostream &o, graph_t g) { // TODO Dopracowac "rysowanie" (std::setw, największy wierzchołek)
@@ -116,22 +110,41 @@ graph_t random_solution(graph_t &problem) { // TODO Przypadki z 1 wierzchołkiem
     std::uniform_int_distribution<int> distr(0, 1);
     for (int i = 0; i < solution.size; i++) {
         if (!static_cast<bool>(distr(rgen))) {
-            solution.remove_vertex(i);
+            solution.set_indicator(i);
         }
     }
     return solution;
 }
 
-using clique_t = graph_t;
-using solution = int;
+graph_t brute_force (graph_t &problem) { //TODO sprawdzic, czy generuja sie wszystkie rozwiazania
+    graph_t solution = problem;
+    graph_t best_solution = problem;
+    int j = 0;
+    for (int i = 0; i < solution.size; i++) {
+        solution.indicators[i].flip();
+        do {
+            j++;
+            solution.set_indicators_num();
+            solution.set_edges_num();
+            solution.set_k_edges_num();
+            if (solution.get_goal() >= best_solution.get_goal()) {
+                best_solution = solution;
+                std::cout << j << " " << best_solution.get_goal() << "\n";
+            }
+        } while (std::next_permutation(solution.indicators.begin(), solution.indicators.end()));
+    }
+    std::cout << j << "\n";
+    return best_solution;
+}
+
 
 
 int main() {
-    graph_t graph = graph_t(6);
+    graph_t graph = graph_t(20);
 
     std::cout << "Graph: \n" << graph; // TODO Drukowanie grafu i informacji o nim
     std::cout << "Indicators: ";
-    for (auto && indicator : graph.indicators) {
+    for (auto indicator : graph.indicators) {
         std::cout << indicator << " ";
     }
     std::cout << "\n";
@@ -139,17 +152,17 @@ int main() {
     std::cout << "Clique edges count: " << graph.k_edges_num << "\n";
     std::cout << "Goal: " << graph.get_goal() << "\n";
 
+    std::cout << brute_force(graph);
+
 //    graph_t subgraph = graph;
 //
 //    std::cout << "\n" << "* * * Remove vertex * * *" <<  "\n\n";
 //
-//    subgraph.remove_vertex(3);
-//    subgraph.remove_vertex(2);
-//    subgraph.remove_vertex(4);
+//    subgraph.set_indicator(2);
 //
 //    std::cout << "Subgraph: \n" << subgraph;
 //    std::cout << "Indicators: ";
-//    for (auto && indicator : subgraph.indicators) {
+//    for (auto indicator : subgraph.indicators) {
 //        std::cout << indicator << " ";
 //    }
 //    std::cout << "\n";
@@ -159,7 +172,7 @@ int main() {
 //
 //    std::cout << "\n" << "* * * Add vertex * * *" <<  "\n\n";
 //
-//    subgraph.add_vertex(2);
+//    subgraph.set_indicator(2);
 //
 //    std::cout << "Subgraph: \n" << subgraph;
 //    std::cout << "Indicators: ";
@@ -170,19 +183,20 @@ int main() {
 //    std::cout << "Edges count: " << subgraph.edges_num << "\n";
 //    std::cout << "Clique edges count: " << subgraph.k_edges_num << "\n";
 //    std::cout << "Goal: " <<  subgraph.get_goal() << "\n";
+//
+//    subgraph = random_solution(graph);
+//
+//    std::cout << "\n" << "* * * Random solution * * *" <<  "\n\n";
+//
+//    std::cout << "Subgraph: \n" << subgraph;
+//    std::cout << "Indicators: ";
+//    for (auto indicator : subgraph.indicators) {
+//        std::cout << indicator << " ";
+//    }
+//    std::cout << "\n";
+//    std::cout << "Edges count: " << subgraph.edges_num << "\n";
+//    std::cout << "Clique edges count: " << subgraph.k_edges_num << "\n";
+//    std::cout << "Goal: " << subgraph.get_goal() << "\n";
 
-    graph_t subgraph = random_solution(graph);
-
-    std::cout << "\n" << "* * * Random solution * * *" <<  "\n\n";
-
-    std::cout << "Subgraph: \n" << subgraph;
-    std::cout << "Indicators: ";
-    for (auto && indicator : subgraph.indicators) {
-        std::cout << indicator << " ";
-    }
-    std::cout << "\n";
-    std::cout << "Edges count: " << subgraph.edges_num << "\n";
-    std::cout << "Clique edges count: " << subgraph.k_edges_num << "\n";
-    std::cout << "Goal: " << subgraph.get_goal() << "\n";
-
+    return 0;
 }
