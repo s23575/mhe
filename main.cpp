@@ -6,19 +6,23 @@
 #include <algorithm>
 
 const int left_indentation_size = 24;
+const auto left_indentation = std::setw(left_indentation_size);
 
-// <-- Generator liczb pseudolosowych
+const int iterations = 10486;
+const int problem_size = 20;
+
 std::random_device rd;
 std::mt19937 rgen(rd());
 
 // <-- Problem: graf -->
+
 struct graph_t {
     int size;
     std::vector<bool> indicators;
     std::vector<int> vertices;
     std::vector<std::vector<bool>> edges;
 
-    explicit graph_t(int graph_size) {  // TODO Doczytac: explicit, static, [[nodiscard]], const method
+    explicit graph_t(int graph_size) {  // TODO Doczytac: explicit
         size = graph_size;
         indicators = std::vector<bool>(size, true);
         this->
@@ -85,7 +89,7 @@ struct graph_t {
 
 std::ostream &operator<<(std::ostream &o, const graph_t &graph) {
     int vertex_size = static_cast<int>(std::to_string(graph.size - 1).length());
-    o << std::setw(left_indentation_size) << "Graph: "
+    o << left_indentation << "Graph: "
       << std::setw(vertex_size) << " " << " ";
     for (int i = 0; i < graph.size; i++) {
         if (graph.indicators[i]) o << std::setw(vertex_size) << graph.vertices[i] << " ";
@@ -93,7 +97,7 @@ std::ostream &operator<<(std::ostream &o, const graph_t &graph) {
     o << "\n";
     for (int i = 0; i < graph.size; i++) {
         if (graph.indicators[i]) {
-            o << std::setw(left_indentation_size) << " "
+            o << left_indentation << " "
               << std::setw(vertex_size) << graph.vertices[i] << " ";
             for (int j = 0; j < graph.size; j++) {
                 if (graph.indicators[j]) std::cout << std::setw(vertex_size) << graph.edges[i][j] << " ";
@@ -105,11 +109,11 @@ std::ostream &operator<<(std::ostream &o, const graph_t &graph) {
 }
 
 std::ostream &print_graph(std::ostream &o, graph_t &graph) {
-    o << graph << std::setw(left_indentation_size) << "Indicators: " << graph.get_indicators()
-      << "\n" << std::setw(left_indentation_size) << "Vertices (ct.): " << graph.get_vertices_ct() << "\n"
-      << std::setw(left_indentation_size) << "Edges (ct.): " << graph.get_edges_ct() << "\n"
-      << std::setw(left_indentation_size) << "Max clique edges (ct.): " << graph.get_k_edges_ct() << "\n"
-      << std::setw(left_indentation_size) << "Goal: " << graph.get_goal() << "\n";
+    o << graph << left_indentation << "Indicators: " << graph.get_indicators()
+      << "\n" << left_indentation << "Vertices (ct.): " << graph.get_vertices_ct() << "\n"
+      << left_indentation << "Edges (ct.): " << graph.get_edges_ct() << "\n"
+      << left_indentation << "Max clique edges (ct.): " << graph.get_k_edges_ct() << "\n"
+      << left_indentation << "Goal: " << graph.get_goal() << "\n";
     return o;
 }
 
@@ -123,7 +127,7 @@ graph_t create_subgraph(graph_t &graph, const std::vector<int> &indicators) {
 
 // <-- Rozwiązanie -->
 
-graph_t random_solution(graph_t &problem) { // TODO Przypadki z 1 wierzchołkiem (Goal: nan)
+graph_t random_solution(graph_t &problem) {
     graph_t solution = problem;
     std::uniform_int_distribution<int> distr(0, 1);
     for (int i = 0; i < solution.size; i++) {
@@ -134,46 +138,58 @@ graph_t random_solution(graph_t &problem) { // TODO Przypadki z 1 wierzchołkiem
     return solution;
 }
 
-graph_t brute_force(graph_t &problem) { //TODO sprawdzic, czy generuja sie wszystkie rozwiazania
+graph_t brute_force(graph_t &problem) {
     graph_t solution = problem;
     graph_t best_solution = problem;
     int j = 0;
     for (int i = 0; i < solution.size; i++) {
         solution.flip_indicator(i);
         do {
-            j++;
-            std::cout << j << " " << solution.get_goal() << "\n";
             if (solution.get_goal() >= best_solution.get_goal()) {
                 best_solution = solution;
-//                std::cout << j << " " << best_solution.get_goal() << "\n";
             }
         } while (std::next_permutation(solution.indicators.begin(), solution.indicators.end()));
     }
-    std::cout << j << "\n";
+    return best_solution;
+}
+
+graph_t random_modify(graph_t &problem) {
+    std::uniform_int_distribution<int> distr(0, problem.size - 1);
+    int a = distr(rgen);
+    graph_t randomly_modified_solution = problem;
+    randomly_modified_solution.flip_indicator(a);
+    return randomly_modified_solution;
+}
+
+graph_t random_hillclimb(graph_t &problem) {
+    graph_t solution = problem;
+    graph_t best_solution = problem;
+    for (int i = 0; i < iterations; i++) {
+        solution = random_modify(solution);
+        if (solution.get_goal() >= best_solution.get_goal()) {
+            best_solution = solution;
+        }
+    }
     return best_solution;
 }
 
 int main() {
-    graph_t graph = graph_t(10);
 
+    std::cout << "\n" << "* * * Problem * * *" << "\n\n";
+    graph_t graph = graph_t(problem_size);
     print_graph(std::cout, graph);
 
-//    std::cout << brute_force(graph);
+    std::cout << "\n" << "* * * Brute force * * *" << "\n\n";
+    graph_t solution = brute_force(graph);
+    print_graph(std::cout, solution);
 
-    std::cout << "\n" << "* * * Remove vertex * * *" << "\n\n";
+    std::cout << "\n" << "* * * Random hillclimb * * *" << "\n\n";
+    solution = random_hillclimb(graph);
+    print_graph(std::cout, solution);
 
-    graph_t subgraph = create_subgraph(graph, {2});
-    print_graph(std::cout, subgraph);
-
-    std::cout << "\n" << "* * * Add vertex * * *" << "\n\n";
-
-    graph_t subgraph_2 = create_subgraph(subgraph, {2, 3});
-    print_graph(std::cout, subgraph_2);
-
-    std::cout << "\n" << "* * * Random solution * * *" << "\n\n";
-
-    graph_t random_subgraph = random_solution(graph);
-    print_graph(std::cout, random_subgraph);
+//    std::cout << "\n" << "* * * Random solution * * *" << "\n\n";
+//    solution = random_solution(graph);
+//    print_graph(std::cout, solution);
 
     return 0;
 }
