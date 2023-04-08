@@ -23,3 +23,4 @@ MHE Zaoczne 2023: problem kliki
 [Krawędzie]
 
 [Dwa możliwe rozwiązania: wielkość kliki lub najmniejszy podzbiór o wielkości kliki]
+
