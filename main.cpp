@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <string>
 #include <iomanip>
@@ -8,15 +9,15 @@
 const int left_indentation_size = 24;
 const auto left_indentation = std::setw(left_indentation_size);
 
-const int iterations = 10486;
-const int problem_size = 20;
+const int iterations = 1024;
+const int problem_size = 10;
 
 std::random_device rd;
 std::mt19937 rgen(rd());
 
 // <-- Problem: graf -->
 
-struct graph_t {
+struct graph_t {    // TODO Przenieść do osobonego pliku
     int size;
     std::vector<bool> indicators;
     std::vector<int> vertices;
@@ -45,7 +46,8 @@ struct graph_t {
                     else edges[i][j] = static_cast<bool>(distr(rgen));
                 }
             }
-        } while (get_edges_ct() < (size - 1));
+//        } while (get_edges_ct() < (size - 1));
+        } while (get_edges_ct() < get_k_edges_ct() * 3 / 4);
     }
 
     int get_edges_ct() {
@@ -87,6 +89,8 @@ struct graph_t {
     }
 };
 
+// <-- Drukowanie -->
+
 std::ostream &operator<<(std::ostream &o, const graph_t &graph) {
     int vertex_size = static_cast<int>(std::to_string(graph.size - 1).length());
     o << left_indentation << "Graph: "
@@ -127,8 +131,10 @@ graph_t create_subgraph(graph_t &graph, const std::vector<int> &indicators) {
 
 // <-- Rozwiązanie -->
 
-graph_t random_solution(graph_t &problem) {
-    graph_t solution = problem;
+// <-- <-- Losowe rozwiązanie
+
+graph_t random_solution(graph_t problem) { // TODO Przeanalizować, czy parametry przez kopię, czy referencję
+    graph_t solution = std::move(problem);
     std::uniform_int_distribution<int> distr(0, 1);
     for (int i = 0; i < solution.size; i++) {
         if (!static_cast<bool>(distr(rgen))) {
@@ -138,9 +144,11 @@ graph_t random_solution(graph_t &problem) {
     return solution;
 }
 
-graph_t brute_force(graph_t &problem) {
-    graph_t solution = problem;
-    graph_t best_solution = problem;
+// <-- <-- Brutalna siła
+
+graph_t brute_force(graph_t problem) {
+    graph_t solution = std::move(problem);
+    graph_t best_solution = solution;
     int j = 0;
     for (int i = 0; i < solution.size; i++) {
         solution.flip_indicator(i);
@@ -153,19 +161,19 @@ graph_t brute_force(graph_t &problem) {
     return best_solution;
 }
 
-graph_t random_modify(graph_t &problem) {
-    std::uniform_int_distribution<int> distr(0, problem.size - 1);
+// <-- <-- Algorytm wspinaczkowy (losowy)
+
+void random_modify(graph_t &current_solution) { // TODO Zmienić nazwy zmiennych
+    std::uniform_int_distribution<int> distr(0, current_solution.size - 1);
     int a = distr(rgen);
-    graph_t randomly_modified_solution = problem;
-    randomly_modified_solution.flip_indicator(a);
-    return randomly_modified_solution;
+    current_solution.flip_indicator(a);
 }
 
-graph_t random_hillclimb(graph_t &problem) {
-    graph_t solution = problem;
-    graph_t best_solution = problem;
+graph_t hillclimb_random(graph_t problem) {
+    graph_t solution = std::move(problem);
+    graph_t best_solution = solution;
     for (int i = 0; i < iterations; i++) {
-        solution = random_modify(solution);
+        random_modify(solution);
         if (solution.get_goal() >= best_solution.get_goal()) {
             best_solution = solution;
         }
@@ -173,23 +181,54 @@ graph_t random_hillclimb(graph_t &problem) {
     return best_solution;
 }
 
+// <-- <-- Algorytm wspinaczkowy (deterministyczny)
+
+std::vector<graph_t> generate_neighbourhood(graph_t &current_solution) {
+    std::vector<graph_t> neighbourhood;
+    for (int i = 0; i < current_solution.size; i++) {
+        graph_t neighbour = current_solution;
+        neighbour.flip_indicator(i);
+        neighbourhood.push_back(neighbour);
+    }
+    return neighbourhood;
+};
+
+graph_t best_neighbour(graph_t &current_solution) {
+    std::vector<graph_t> neighbourhood = generate_neighbourhood(current_solution);
+    return *std::max_element(neighbourhood.begin(), neighbourhood.end(),
+                             [](auto l, auto r) { return l.get_goal() < r.get_goal(); });
+}
+
+graph_t hillclimb_deterministic(graph_t problem) {
+    graph_t solution = std::move(problem);
+    graph_t best_solution = solution;
+    for (int i = 0; i < iterations; i++) {
+        solution = best_neighbour(solution);
+        if (solution.get_goal() >= best_solution.get_goal()) {
+            best_solution = solution;
+        }
+    }
+    return best_solution;
+}
+
+
 int main() {
 
     std::cout << "\n" << "* * * Problem * * *" << "\n\n";
     graph_t graph = graph_t(problem_size);
     print_graph(std::cout, graph);
 
-    std::cout << "\n" << "* * * Brute force * * *" << "\n\n";
-    graph_t solution = brute_force(graph);
-    print_graph(std::cout, solution);
-
-    std::cout << "\n" << "* * * Random hillclimb * * *" << "\n\n";
-    solution = random_hillclimb(graph);
-    print_graph(std::cout, solution);
-
-//    std::cout << "\n" << "* * * Random solution * * *" << "\n\n";
-//    solution = random_solution(graph);
+//    std::cout << "\n" << "* * * Brute force * * *" << "\n\n";
+//    graph_t solution = brute_force(graph);
 //    print_graph(std::cout, solution);
+//
+//    std::cout << "\n" << "* * * Random hillclimb * * *" << "\n\n";
+//    solution = hillclimb_random(graph);
+//    print_graph(std::cout, solution);
+
+    std::cout << "\n" << "* * * Deterministic hillclimb * * *" << "\n\n";
+    graph_t solution = hillclimb_deterministic(graph);
+    print_graph(std::cout, solution);
 
     return 0;
 }
