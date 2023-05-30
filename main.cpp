@@ -5,6 +5,9 @@
 #include <iomanip>
 #include <random>
 #include <algorithm>
+#include <list>
+
+// TODO Uporządkować, kiedy argument przez referencję, a kiedy przez kopię
 
 const int left_indentation_size = 24;
 const auto left_indentation = std::setw(left_indentation_size);
@@ -23,7 +26,7 @@ struct graph_t {    // TODO Przenieść do osobonego pliku
     std::vector<int> vertices;
     std::vector<std::vector<bool>> edges;
 
-    explicit graph_t(int graph_size) {  // TODO Doczytac: explicit
+    explicit graph_t(int graph_size) {  // TODO Doczytać: explicit
         size = graph_size;
         indicators = std::vector<bool>(size, true);
         this->
@@ -121,10 +124,10 @@ std::ostream &print_graph(std::ostream &o, graph_t &graph) {
     return o;
 }
 
-graph_t create_subgraph(graph_t &graph, const std::vector<int> &indicators) {
+graph_t create_subgraph(graph_t &graph, const std::vector<int> &subgraph_indicators) {
     graph_t subgraph = graph;
-    for (auto indicator: indicators) {
-        subgraph.flip_indicator(indicator);
+    for (auto subgraph_indicator : subgraph_indicators) {
+        subgraph.flip_indicator(subgraph_indicator);
     }
     return subgraph;
 }
@@ -133,7 +136,7 @@ graph_t create_subgraph(graph_t &graph, const std::vector<int> &indicators) {
 
 // <-- <-- Losowe rozwiązanie
 
-graph_t random_solution(graph_t problem) { // TODO Przeanalizować, czy parametry przez kopię, czy referencję
+graph_t random_solution(graph_t problem) {
     graph_t solution = std::move(problem);
     std::uniform_int_distribution<int> distr(0, 1);
     for (int i = 0; i < solution.size; i++) {
@@ -149,7 +152,7 @@ graph_t random_solution(graph_t problem) { // TODO Przeanalizować, czy parametr
 graph_t brute_force(graph_t problem) {
     graph_t solution = std::move(problem);
     graph_t best_solution = solution;
-    int j = 0;
+    std::fill(solution.indicators.begin(), solution.indicators.end(), true);
     for (int i = 0; i < solution.size; i++) {
         solution.flip_indicator(i);
         do {
@@ -163,10 +166,10 @@ graph_t brute_force(graph_t problem) {
 
 // <-- <-- Algorytm wspinaczkowy (losowy)
 
-void random_modify(graph_t &current_solution) { // TODO Zmienić nazwy zmiennych
+void random_modify(graph_t &current_solution) {
     std::uniform_int_distribution<int> distr(0, current_solution.size - 1);
     int a = distr(rgen);
-    current_solution.flip_indicator(a);
+    current_solution.flip_indicator(a); // Zamiana tylko dodanich wskaźników?
 }
 
 graph_t hillclimb_random(graph_t problem) {
@@ -211,23 +214,28 @@ graph_t hillclimb_deterministic(graph_t problem) {
     return best_solution;
 }
 
+// <-- <-- Algorytm tabu (deterministyczny)
 
 int main() {
 
     std::cout << "\n" << "* * * Problem * * *" << "\n\n";
-    graph_t graph = graph_t(problem_size);
-    print_graph(std::cout, graph);
+    graph_t problem = graph_t(problem_size);
+    print_graph(std::cout, problem);
 
-//    std::cout << "\n" << "* * * Brute force * * *" << "\n\n";
-//    graph_t solution = brute_force(graph);
-//    print_graph(std::cout, solution);
-//
-//    std::cout << "\n" << "* * * Random hillclimb * * *" << "\n\n";
-//    solution = hillclimb_random(graph);
-//    print_graph(std::cout, solution);
+    std::cout << "\n" << "* * * Random solution * * *" << "\n\n";
+    graph_t random_sol = random_solution(problem);
+    print_graph(std::cout, random_sol);
+
+    std::cout << "\n" << "* * * Brute force * * *" << "\n\n";
+    graph_t solution = brute_force(random_sol);
+    print_graph(std::cout, solution);
+
+    std::cout << "\n" << "* * * Random hillclimb * * *" << "\n\n";
+    solution = hillclimb_random(random_sol);
+    print_graph(std::cout, solution);
 
     std::cout << "\n" << "* * * Deterministic hillclimb * * *" << "\n\n";
-    graph_t solution = hillclimb_deterministic(graph);
+    solution = hillclimb_deterministic(random_sol);
     print_graph(std::cout, solution);
 
     return 0;
