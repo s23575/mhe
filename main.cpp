@@ -1,11 +1,11 @@
 #include <iostream>
-#include <utility>
 #include <vector>
 #include <string>
 #include <iomanip>
 #include <random>
 #include <algorithm>
 #include <list>
+#include <fstream>
 
 // TODO Uporządkować, kiedy argument przez referencję, a kiedy przez kopię
 
@@ -40,12 +40,14 @@ struct graph_t {    // TODO Przenieść do osobonego pliku
 
     void set_edges() {
         std::uniform_int_distribution<int> distr(0, 1);
-        edges.resize(size, std::vector<bool>(size));
+        edges.resize(size, std::vector<bool>());
+
+        for (int i = 0; i < size; i++) edges[i].resize(i + 1);
+
         do {
             for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
+                for (int j = 0; j < i + 1; j++) {
                     if (j == i) edges[i][j] = false;
-                    else if (i > j) edges[i][j] = edges[j][i];
                     else edges[i][j] = static_cast<bool>(distr(rgen));
                 }
             }
@@ -55,12 +57,18 @@ struct graph_t {    // TODO Przenieść do osobonego pliku
 
     int get_edges_ct() {
         int edges_ct = 0;
+
         for (int i = 0; i < size; i++) {
             if (indicators[i]) {
-                for (int j = 0; j < size; j++) if (indicators[j] && edges[i][j]) edges_ct++;
+                for (int j = 0; j < i + 1; j++) if (indicators[j] && edges[i][j]) edges_ct++;
             }
         }
-        return edges_ct / 2;
+
+        return edges_ct;
+    }
+
+    int get_vertices_ct() {
+        return static_cast<int>(std::count(indicators.begin(), indicators.end(), true));
     }
 
     int get_k_edges_ct() {
@@ -68,16 +76,10 @@ struct graph_t {    // TODO Przenieść do osobonego pliku
         return (static_cast<int>(vertices_ct) * (static_cast<int>(vertices_ct) - 1)) / 2;
     }
 
-    int get_vertices_ct() {
-        int vertices_ct = 0;
-        for (auto indicator: indicators) if (indicator) vertices_ct++;
-        return vertices_ct;
-    }
-
     std::string get_indicators() {
-        std::string s;
-        for (auto indicator: indicators) s += to_string(indicator) + " ";
-        return s;
+        std::string indicators_string;
+        for (auto indicator: indicators) indicators_string += to_string(indicator) + " ";
+        return indicators_string;
     }
 
     void flip_indicator(int i) {
@@ -87,7 +89,7 @@ struct graph_t {    // TODO Przenieść do osobonego pliku
     double get_goal() {
         int edges_ct = get_edges_ct();
         int k_edges_ct = get_k_edges_ct();
-        return (static_cast<int>(get_vertices_ct()) - (k_edges_ct - edges_ct)) * 1000
+        return (get_vertices_ct() - (k_edges_ct - edges_ct)) * 1000
                * ((double) edges_ct / (double) k_edges_ct);
     }
 };
@@ -106,7 +108,7 @@ std::ostream &operator<<(std::ostream &o, const graph_t &graph) {
         if (graph.indicators[i]) {
             o << left_indentation << " "
               << std::setw(vertex_size) << graph.vertices[i] << " ";
-            for (int j = 0; j < graph.size; j++) {
+            for (int j = 0; j < i + 1; j++) {
                 if (graph.indicators[j]) std::cout << std::setw(vertex_size) << graph.edges[i][j] << " ";
             }
             o << "\n";
@@ -116,17 +118,35 @@ std::ostream &operator<<(std::ostream &o, const graph_t &graph) {
 }
 
 std::ostream &print_graph(std::ostream &o, graph_t &graph) {
-    o << graph << left_indentation << "Indicators: " << graph.get_indicators()
-      << "\n" << left_indentation << "Vertices (ct.): " << graph.get_vertices_ct() << "\n"
+    o << graph
+      << left_indentation << "Indicators: " << graph.get_indicators() << "\n"
+      << left_indentation << "Vertices (ct.): " << graph.get_vertices_ct() << "\n"
       << left_indentation << "Edges (ct.): " << graph.get_edges_ct() << "\n"
       << left_indentation << "Max clique edges (ct.): " << graph.get_k_edges_ct() << "\n"
       << left_indentation << "Goal: " << graph.get_goal() << "\n";
     return o;
 }
 
+std::ostream &print_graph_for_R(std::ostream &o, graph_t &graph) { // TODO print_graph_for_GraphViz
+    o << "\n" << "g <- graph_from_literal(";
+
+    for (int i = 0; i < graph.size; i++) {
+        if (graph.indicators[i]) {
+            for (int j = 0; j < i + 1; j++) {
+                if (graph.indicators[j] && graph.edges[i][j]) {
+                    o << std::to_string(graph.vertices[i]) << "--" << std::to_string(graph.vertices[j]) << ", ";
+                }
+            }
+        }
+    }
+    o << graph.vertices[0] << "--" << graph.vertices[0] << ")" << "\n";
+
+    return o;
+}
+
 graph_t create_subgraph(graph_t &graph, const std::vector<int> &subgraph_indicators) {
     graph_t subgraph = graph;
-    for (auto subgraph_indicator : subgraph_indicators) {
+    for (auto subgraph_indicator: subgraph_indicators) {
         subgraph.flip_indicator(subgraph_indicator);
     }
     return subgraph;
@@ -136,8 +156,8 @@ graph_t create_subgraph(graph_t &graph, const std::vector<int> &subgraph_indicat
 
 // <-- <-- Losowe rozwiązanie
 
-graph_t random_solution(graph_t problem) {
-    graph_t solution = std::move(problem);
+graph_t random_solution(graph_t &problem) {
+    graph_t solution = problem;
     std::uniform_int_distribution<int> distr(0, 1);
     for (int i = 0; i < solution.size; i++) {
         if (!static_cast<bool>(distr(rgen))) {
@@ -149,8 +169,8 @@ graph_t random_solution(graph_t problem) {
 
 // <-- <-- Brutalna siła
 
-graph_t brute_force(graph_t problem) {
-    graph_t solution = std::move(problem);
+graph_t brute_force(graph_t &problem) {
+    graph_t solution = problem;
     graph_t best_solution = solution;
     std::fill(solution.indicators.begin(), solution.indicators.end(), true);
     for (int i = 0; i < solution.size; i++) {
@@ -169,11 +189,11 @@ graph_t brute_force(graph_t problem) {
 void random_modify(graph_t &current_solution) {
     std::uniform_int_distribution<int> distr(0, current_solution.size - 1);
     int a = distr(rgen);
-    current_solution.flip_indicator(a); // Zamiana tylko dodanich wskaźników?
+    current_solution.flip_indicator(a); // TODO Zamiana tylko dodatnich wskaźników?
 }
 
-graph_t hillclimb_random(graph_t problem) {
-    graph_t solution = std::move(problem);
+graph_t hillclimb_random(graph_t &problem) {
+    graph_t solution = problem;
     graph_t best_solution = solution;
     for (int i = 0; i < iterations; i++) {
         random_modify(solution);
@@ -202,8 +222,8 @@ graph_t best_neighbour(graph_t &current_solution) {
                              [](auto l, auto r) { return l.get_goal() < r.get_goal(); });
 }
 
-graph_t hillclimb_deterministic(graph_t problem) {
-    graph_t solution = std::move(problem);
+graph_t hillclimb_deterministic(graph_t &problem) {
+    graph_t solution = problem;
     graph_t best_solution = solution;
     for (int i = 0; i < iterations; i++) {
         solution = best_neighbour(solution);
@@ -221,6 +241,7 @@ int main() {
     std::cout << "\n" << "* * * Problem * * *" << "\n\n";
     graph_t problem = graph_t(problem_size);
     print_graph(std::cout, problem);
+    print_graph_for_R(std::cout, problem);
 
     std::cout << "\n" << "* * * Random solution * * *" << "\n\n";
     graph_t random_sol = random_solution(problem);
