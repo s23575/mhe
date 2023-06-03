@@ -6,14 +6,15 @@
 #include <algorithm>
 #include <list>
 #include <fstream>
+#include <set>
 
 // TODO Uporządkować, kiedy argument przez referencję, a kiedy przez kopię
 
 const int left_indentation_size = 24;
 const auto left_indentation = std::setw(left_indentation_size);
 
-const int iterations = 1024;
-const int problem_size = 10;
+const int iterations = 4096;
+const int problem_size = 20;
 
 std::random_device rd;
 std::mt19937 rgen(rd());
@@ -39,17 +40,16 @@ struct graph_t {    // TODO Przenieść do osobonego pliku
     }
 
     void set_edges() {
-        std::uniform_int_distribution<int> distr(0, 1);
         edges.resize(size, std::vector<bool>());
 
-        for (int i = 0; i < size; i++) edges[i].resize(i + 1);
+        for (int i = 0; i < size; i++) edges[i].resize(i + 1, false);
 
         do {
             for (int i = 0; i < size; i++) {
-                for (int j = 0; j < i + 1; j++) {
-                    if (j == i) edges[i][j] = false;
-                    else edges[i][j] = static_cast<bool>(distr(rgen));
-                }
+                std::uniform_int_distribution<int> distr(0, i);
+                int j = distr(rgen);
+                if (j == i) edges[i][j] = false;
+                else edges[i][j] = static_cast<bool>(distr(rgen));
             }
 //        } while (get_edges_ct() < (size - 1));
         } while (get_edges_ct() < get_k_edges_ct() * 3 / 4);
@@ -134,7 +134,8 @@ std::ostream &print_graph_for_R(std::ostream &o, graph_t &graph) { // TODO print
         if (graph.indicators[i]) {
             for (int j = 0; j < i + 1; j++) {
                 if (graph.indicators[j] && graph.edges[i][j]) {
-                    o << std::to_string(graph.vertices[i]) << "--" << std::to_string(graph.vertices[j]) << ", ";
+                    o << std::to_string(graph.vertices[i]) << "--"
+                      << std::to_string(graph.vertices[j]) << ",\n";
                 }
             }
         }
@@ -207,6 +208,10 @@ graph_t hillclimb_random(graph_t &problem) {
 // <-- <-- Algorytm wspinaczkowy (deterministyczny)
 
 std::vector<graph_t> generate_neighbourhood(graph_t &current_solution) {
+    // Zdefiniowanie sąsiedztwa:
+    // - wszystkie, z jednym zmienionym,
+    // - wszystkie, z jednym zmienionym, ale tylko dodatnim,
+    // - zamiana dwóch sąsiadujących
     std::vector<graph_t> neighbourhood;
     for (int i = 0; i < current_solution.size; i++) {
         graph_t neighbour = current_solution;
@@ -236,28 +241,64 @@ graph_t hillclimb_deterministic(graph_t &problem) {
 
 // <-- <-- Algorytm tabu (deterministyczny)
 
-int main() {
+graph_t tabu_search(graph_t &problem) {
 
-    std::cout << "\n" << "* * * Problem * * *" << "\n\n";
-    graph_t problem = graph_t(problem_size);
-    print_graph(std::cout, problem);
-    print_graph_for_R(std::cout, problem);
+    graph_t solution = problem;
+    graph_t best_solution = solution;
 
-    std::cout << "\n" << "* * * Random solution * * *" << "\n\n";
-    graph_t random_sol = random_solution(problem);
-    print_graph(std::cout, random_sol);
+    std::vector<graph_t> tabu_list;
+    tabu_list.push_back(solution);
+ 
+    for (int i = 0; i < iterations; i++) {
+        std::vector<graph_t> neighbourhood = generate_neighbourhood(tabu_list.back());
+        for (auto tabu_item: tabu_list) {
 
-    std::cout << "\n" << "* * * Brute force * * *" << "\n\n";
-    graph_t solution = brute_force(random_sol);
-    print_graph(std::cout, solution);
+            auto found = std::find_if(neighbourhood.begin(), neighbourhood.end(),
+                                          [&tabu_item](const graph_t &graph) {
+                                              return graph.indicators == tabu_item.indicators;
+                                          });
 
-    std::cout << "\n" << "* * * Random hillclimb * * *" << "\n\n";
-    solution = hillclimb_random(random_sol);
-    print_graph(std::cout, solution);
+            if (found != neighbourhood.end()) neighbourhood.erase(found);
+            if (neighbourhood.empty()) return best_solution;
+        }
+        graph_t next_solution = *std::max_element(neighbourhood.begin(), neighbourhood.end(),
+                          [](auto l, auto r) { return l.get_goal() < r.get_goal(); });
+        if (next_solution.get_goal() >= best_solution.get_goal()) {
+            best_solution = next_solution;
+        }
 
-    std::cout << "\n" << "* * * Deterministic hillclimb * * *" << "\n\n";
-    solution = hillclimb_deterministic(random_sol);
-    print_graph(std::cout, solution);
-
-    return 0;
+        tabu_list.push_back(next_solution);
+    }
+    return best_solution;
 }
+
+
+    int main() {
+
+        std::cout << "\n" << "* * * Problem * * *" << "\n\n";
+        graph_t problem = graph_t(problem_size);
+        print_graph(std::cout, problem);
+        print_graph_for_R(std::cout, problem);
+
+        std::cout << "\n" << "* * * Random solution * * *" << "\n\n";
+        graph_t random_sol = random_solution(problem);
+        print_graph(std::cout, random_sol);
+
+        std::cout << "\n" << "* * * Brute force * * *" << "\n\n";
+        graph_t solution = brute_force(random_sol);
+        print_graph(std::cout, solution);
+
+        std::cout << "\n" << "* * * Random hillclimb * * *" << "\n\n";
+        solution = hillclimb_random(random_sol);
+        print_graph(std::cout, solution);
+
+        std::cout << "\n" << "* * * Deterministic hillclimb * * *" << "\n\n";
+        solution = hillclimb_deterministic(random_sol);
+        print_graph(std::cout, solution);
+
+        std::cout << "\n" << "* * * Tabu search * * *" << "\n\n";
+        solution = tabu_search(random_sol);
+        print_graph(std::cout, solution);
+
+        return 0;
+    }
