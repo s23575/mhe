@@ -32,7 +32,7 @@ namespace mhe {
           << left_indentation << "Vertices (num): " << get_vertices_num(indicators, graph) << "\n"
           << left_indentation << "Edges (num): " << get_edges_num(indicators, graph) << "\n"
           << left_indentation << "Max clique edges (num): " << get_k_edges_num(indicators, graph) << "\n"
-          << left_indentation << "Goal: " << get_goal(indicators, graph) << "\n";
+          << left_indentation << "Goal: " << get_solution_goal(indicators, graph) << "\n";
         return o;
     }
 
@@ -53,8 +53,15 @@ namespace mhe {
 
         return o;
     }
-
     // TODO print_graph_for_GraphViz
+
+    std::ostream &print(std::ostream &o, std::string title, indicators_t& indicators, graph_t& graph) {
+        o << "\n" << "* * * " << title << " * * *" << "\n\n";
+        print_graph(o, indicators, graph);
+        print_graph_data(o, indicators, graph);
+
+        return o;
+    }
 
     std::string indicators_to_string(indicators_t &indicators) {
         std::string indicators_string;

@@ -5,7 +5,9 @@ namespace mhe {
 
     inline int get_iterations() { return 2048; }
 
-    inline int get_problem_size() { return 5; }
+    inline int get_problem_size() { return 20; }
+
+    inline int get_population_size() { return 10; }
 
 } // mhe
 

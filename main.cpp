@@ -7,49 +7,41 @@
 #include "solutions/hillclimb_solutions.h"
 #include "solutions/tabu_search.h"
 #include "solutions/sim_annealing.h"
+#include "solutions/generic_algorithm.h"
 
 // TODO Uporządkować, kiedy argument przez referencję, a kiedy przez kopię
 
 int main() {
 
-    std::cout << "\n" << "* * * Problem * * *" << "\n\n";
-    mhe::graph_t graph = mhe::graph_t(mhe::get_problem_size());
-    mhe::indicators_t problem = mhe::indicators_t(mhe::get_problem_size(), true);
+    using namespace mhe;
 
-    mhe::print_graph(std::cout, problem, graph);
-    mhe::print_graph_data(std::cout, problem, graph);
-//    mhe::print_graph_for_R(std::cout, problem, graph);
+        graph_t graph = graph_t(get_problem_size());
 
-    std::cout << "\n" << "* * * Random solution * * *" << "\n\n";
-    mhe::indicators_t random_sol = mhe::random_solution(problem);
-    mhe::print_graph(std::cout, random_sol, graph);
-    mhe::print_graph_data(std::cout, random_sol, graph);
+        indicators_t problem = indicators_t(get_problem_size(), true);
+        print(std::cout, "Problem", problem, graph);
+//    print_graph_for_R(std::cout, problem, graph);
 
-//    std::cout << "\n" << "* * * Brute force * * *" << "\n\n";
-//    mhe::indicators_t solution = mhe::brute_force(problem, graph);
-//    mhe::print_graph(std::cout, solution, graph);
-//    mhe::print_graph_data(std::cout, solution, graph);
-
-//    std::cout << "\n" << "* * * Random hillclimb * * *" << "\n\n";
-//    mhe::indicators_t solution_random_hillclimb = mhe::hillclimb_random(random_sol, graph);
-//    mhe::print_graph(std::cout, solution_random_hillclimb, graph);
-//    mhe::print_graph_data(std::cout, solution_random_hillclimb, graph);
-
-//    std::cout << "\n" << "* * * Deterministic hillclimb * * *" << "\n\n";
-//    mhe::indicators_t solution_deterministic_hillclimb = mhe::hillclimb_deterministic(random_sol, graph);
-//    mhe::print_graph(std::cout, solution_deterministic_hillclimb, graph);
-//    mhe::print_graph_data(std::cout, solution_deterministic_hillclimb, graph);
-
-    std::cout << "\n" << "* * * Tabu search * * *" << "\n\n";
-    mhe::indicators_t solution_tabu_search = mhe::tabu_search(random_sol, graph);
-    mhe::print_graph(std::cout, solution_tabu_search, graph);
-    mhe::print_graph_data(std::cout, solution_tabu_search, graph);
+//        indicators_t random_sol = random_solution(problem);
+//        print(std::cout, "Random solution", random_sol, graph);
 //
-//    std::cout << "\n" << "* * * Simulated annealing * * *" << "\n\n"; // TODO sprawdzić inny sposób kalkulacji temp.
-//    mhe::indicators_t solution_sim_annealing = mhe::sim_annealing(random_sol, graph,
-//                                                                  [](int k) { return 10000.0 / k; });
-//    mhe::print_graph(std::cout, solution_sim_annealing, graph);
-//    mhe::print_graph_data(std::cout, solution_sim_annealing, graph);
+//        indicators_t solution = brute_force(problem, graph);
+//        print(std::cout, "Brute force", solution, graph);
+//
+//        indicators_t solution_random_hillclimb = hillclimb_random(random_sol, graph);
+//        print(std::cout, "Random hillclimb", solution_random_hillclimb, graph);
+//
+//        indicators_t solution_deterministic_hillclimb = hillclimb_deterministic(random_sol, graph);
+//        print(std::cout, "Deterministic hillclimb", solution_deterministic_hillclimb, graph);
+//
+//        indicators_t solution_tabu_search = tabu_search(random_sol, graph);
+//        print(std::cout, "Tabu search", solution_tabu_search, graph);
+//
+//        indicators_t solution_sim_annealing = sim_annealing(random_sol, graph,
+//                                                                      [](int k) { return 1000.0 / k; });
+//        print(std::cout, "Simulated annealing", solution_sim_annealing, graph);
+
+        indicators_t soultion_generic_algorithm = generic_algorithm(problem, graph);
+        print(std::cout, "Generic algorithm", soultion_generic_algorithm, graph);
 
     return 0;
 }

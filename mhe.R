@@ -155,7 +155,7 @@ clique_num(g)
 # get_k_edges_ct
 
 get_goal <- clique_num(g) * 1000
-get_goal
+get_solution_goal
 
 get_cliques <- largest_cliques(g)
 get_cliques

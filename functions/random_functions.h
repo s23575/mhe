@@ -6,7 +6,7 @@
 namespace mhe {
 
     indicators_t random_solution(indicators_t &problem);
-    void random_modify(indicators_t &current_solution);
+    indicators_t random_modify(indicators_t &current_solution);
 
 } // mhe
 

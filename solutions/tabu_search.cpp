@@ -3,7 +3,7 @@
 #include "../functions/neighbours.h"
 #include "../functions/printing.h"
 #include <set>
-#include <cstdio>
+// #include <cstdio>
 
 namespace mhe {
 
@@ -19,6 +19,13 @@ namespace mhe {
             indicators_t tabu_last_element = *tabu_set.insert(next_solution).first;
             std::vector<indicators_t> neighbourhood = generate_neighbourhood(tabu_last_element);
 
+//            printf("Tabu elements: %s\n", indicators_to_string(tabu_last_element).c_str());
+//            printf("Tabu size: %zu\n", tabu_set.size());
+//            for (auto t : tabu_set) {
+//                printf("%s\n", indicators_to_string(t).c_str());
+//            }
+//            printf("\n");
+
             neighbourhood.erase(std::remove_if(neighbourhood.begin(), neighbourhood.end(),
                                                [&](indicators_t neigbour) {
                                                    return tabu_set.contains(neigbour);
@@ -30,11 +37,11 @@ namespace mhe {
             }
 
             next_solution = *std::max_element(neighbourhood.begin(), neighbourhood.end(),
-                                                           [&](auto l, auto r) {
-                                                               return get_goal(l, graph) < get_goal(r, graph);
-                                                           });
+                                              [&](auto l, auto r) {
+                                                  return get_solution_goal(l, graph) < get_solution_goal(r, graph);
+                                              });
 
-            if (get_goal(next_solution, graph) >= get_goal(best_solution, graph)) {
+            if (get_solution_goal(next_solution, graph) >= get_solution_goal(best_solution, graph)) {
                 best_solution = next_solution;
             }
 

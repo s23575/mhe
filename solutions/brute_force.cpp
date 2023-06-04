@@ -8,7 +8,7 @@ namespace mhe {
         for (auto &&i: solution) {
             i.flip();
             do {
-                if (get_goal(solution, graph) >= get_goal(best_solution, graph)) {
+                if (get_solution_goal(solution, graph) >= get_solution_goal(best_solution, graph)) {
                     best_solution = solution;
                 }
             } while (std::next_permutation(solution.begin(), solution.end()));

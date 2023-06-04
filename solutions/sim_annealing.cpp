@@ -16,17 +16,17 @@ namespace mhe {
         indicators_t best_solution_globally = solution;
 
         for (int i = 1; i < get_iterations(); i++) {
-            random_modify(solution);
-            if (get_goal(solution, graph) >= get_goal(best_solution, graph)) {
+            solution = random_modify(solution);
+            if (get_solution_goal(solution, graph) >= get_solution_goal(best_solution, graph)) {
                 best_solution = solution;
-                if (get_goal(best_solution, graph) >= get_goal(best_solution_globally, graph)) {
+                if (get_solution_goal(best_solution, graph) >= get_solution_goal(best_solution_globally, graph)) {
                     best_solution_globally = best_solution;
                 }
             } else {
                 std::uniform_real_distribution<double> u(0.0, 0.1);
                 if (u(rgen_sim_annealing::rgen) <
                     std::exp(-std::abs
-                            (get_goal(solution, graph) - get_goal(best_solution, graph)) / temp(i)))
+                            (get_solution_goal(solution, graph) - get_solution_goal(best_solution, graph)) / temp(i)))
                 {
                     best_solution = solution;
                 }
