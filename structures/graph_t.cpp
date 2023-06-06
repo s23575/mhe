@@ -1,6 +1,7 @@
-#include <random>
 #include "graph_t.h"
 #include "indicators_t.h"
+
+#include <random>
 
 namespace rgen_graph_t {
     std::random_device rd;

@@ -32,7 +32,7 @@ namespace mhe {
           << left_indentation << "Vertices (num): " << get_vertices_num(indicators, graph) << "\n"
           << left_indentation << "Edges (num): " << get_edges_num(indicators, graph) << "\n"
           << left_indentation << "Max clique edges (num): " << get_k_edges_num(indicators, graph) << "\n"
-          << left_indentation << "Goal: " << get_solution_goal(indicators, graph) << "\n";
+          << left_indentation << "Score: " << get_solution_score(indicators, graph) << "\n";
         return o;
     }
 

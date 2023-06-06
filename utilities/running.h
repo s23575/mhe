@@ -5,7 +5,7 @@
 
 namespace mhe {
 
-    void run(const std::vector<int>& algorithms_to_run);
+    void run(const std::vector<int> &solutions_to_run);
 
 } // mhe
 

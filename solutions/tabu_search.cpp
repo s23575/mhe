@@ -1,7 +1,7 @@
 #include "tabu_search.h"
-#include "../functions/configuration.h"
+#include "../utilities/configuration.h"
 #include "../functions/neighbours.h"
-#include "../functions/printing.h"
+#include "../utilities/printing.h"
 #include <set>
 // #include <cstdio>
 
@@ -15,7 +15,7 @@ namespace mhe {
         std::set<indicators_t> tabu_set;
         indicators_t next_solution = solution;
 
-        for (int i = 0; i < get_iterations(); i++) {
+        for (int i = 0; i < iterations; i++) {
             indicators_t tabu_last_element = *tabu_set.insert(next_solution).first;
             std::vector<indicators_t> neighbourhood = generate_neighbourhood(tabu_last_element);
 
@@ -38,10 +38,10 @@ namespace mhe {
 
             next_solution = *std::max_element(neighbourhood.begin(), neighbourhood.end(),
                                               [&](auto l, auto r) {
-                                                  return get_solution_goal(l, graph) < get_solution_goal(r, graph);
+                                                  return get_solution_score(l, graph) < get_solution_score(r, graph);
                                               });
 
-            if (get_solution_goal(next_solution, graph) >= get_solution_goal(best_solution, graph)) {
+            if (get_solution_score(next_solution, graph) >= get_solution_score(best_solution, graph)) {
                 best_solution = next_solution;
             }
 

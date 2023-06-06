@@ -1,6 +1,6 @@
 // #include <cstdio>
 #include "neighbours.h"
-#include "printing.h"
+#include "../utilities/printing.h"
 
 namespace mhe {
 
@@ -22,7 +22,7 @@ namespace mhe {
         std::vector<indicators_t> neighbourhood = generate_neighbourhood(current_solution);
         return *std::max_element(neighbourhood.begin(), neighbourhood.end(),
                                  [&](auto l, auto r)
-                                 { return get_solution_goal(l, graph) < get_solution_goal(r, graph); });
+                                 { return get_solution_score(l, graph) < get_solution_score(r, graph); });
     }
 
     // TODO Zdefiniowanie sąsiedztwa: - wszystkie, z jednym zmienionym, - wszystkie, z jednym zmienionym, ale tylko

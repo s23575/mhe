@@ -13,6 +13,7 @@ namespace mhe {
         explicit graph_t(int graph_size);
 
         void set_vertices(int size);
+
         void set_edges(int size);
 
     };

@@ -1,7 +1,7 @@
 #include "generic_algorithm.h"
 #include "../functions/random_functions.h"
-#include "../functions/configuration.h"
-#include "../functions/printing.h"
+#include "../utilities/configuration.h"
+#include "../utilities/printing.h"
 #include <cstdio>
 #include <random>
 
@@ -47,11 +47,11 @@ namespace mhe {
 
     bool terminal_condition(int &iteration) {
         iteration++;
-        return iteration <= get_iterations();
+        return iteration <= iterations;
     }
 
     double fitness(indicators_t specimen, const graph_t &graph) {
-        return (get_solution_goal(specimen, graph) - get_min_goal()) / (get_max_goal() - get_min_goal())
+        return (get_solution_score(specimen, graph) - get_min_score()) / (get_max_score() - get_min_score())
                * 10000;
     }
 
