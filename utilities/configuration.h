@@ -15,9 +15,13 @@ namespace mhe {
 
     extern std::vector<std::string> solutions_titles;
 
+    extern int tabu_size;
+
     std::vector<int> set_parameters_from_command_line(std::vector<std::string> &parameters);
 
     std::vector<int> set_parameters_from_standard_input();
+
+    void find_parameter(std::vector<std::string> &parameters, std::string &parameter_to_find, int &variable);
 
     void get_parameters(std::vector<int> &solutions_to_run);
 

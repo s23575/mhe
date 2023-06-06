@@ -2,37 +2,53 @@
 #include "../utilities/configuration.h"
 #include "../functions/neighbours.h"
 #include "../utilities/printing.h"
+
+#include <iostream>
 #include <set>
-// #include <cstdio>
+#include <queue>
 
 namespace mhe {
 
-    indicators_t tabu_search(indicators_t &problem, const graph_t &graph) {
+    indicators_t tabu_search(indicators_t &problem, graph_t &graph) {
 
-        indicators_t solution = problem;
+        const indicators_t& solution = problem;
         indicators_t best_solution = solution;
 
         std::set<indicators_t> tabu_set;
+        std::set<indicators_t>::iterator tabu_iterator;
+        std::queue<std::set<indicators_t>::iterator> tabu_iterators_queue;
+
         indicators_t next_solution = solution;
 
         for (int i = 0; i < iterations; i++) {
-            indicators_t tabu_last_element = *tabu_set.insert(next_solution).first;
-            std::vector<indicators_t> neighbourhood = generate_neighbourhood(tabu_last_element);
+            tabu_iterator = tabu_set.insert(next_solution).first;
 
-//            printf("Tabu elements: %s\n", indicators_to_string(tabu_last_element).c_str());
-//            printf("Tabu size: %zu\n", tabu_set.size());
+            if (tabu_size > 0) {
+                tabu_iterators_queue.push(tabu_iterator);
+                if (tabu_iterators_queue.size() > tabu_size) {
+                    tabu_set.erase(tabu_iterators_queue.front());
+                    tabu_iterators_queue.pop();
+                }
+            }
+
+            indicators_t tabu_last_element = *tabu_iterator;
+            std::vector<indicators_t> neighbourhood = generate_neighbourhood(tabu_last_element, graph);
+
+            std::cout << "Tabu last element: " << indicators_to_string(tabu_last_element) << "\n";
+            std::cout << "Tabu size: " << tabu_set.size() << "\n";
+//            std::cout << "Tabu elements: " << indicators_to_string(tabu_last_element) << "\n";
 //            for (auto t : tabu_set) {
-//                printf("%s\n", indicators_to_string(t).c_str());
+//                std::cout << indicators_to_string(t) << "\n";
 //            }
-//            printf("\n");
+//            std::cout << "\n";
 
             neighbourhood.erase(std::remove_if(neighbourhood.begin(), neighbourhood.end(),
-                                               [&](indicators_t neigbour) {
-                                                   return tabu_set.contains(neigbour);
+                                               [&](indicators_t neighbour) {
+                                                   return tabu_set.contains(neighbour);
                                                }), neighbourhood.end());
 
             if (neighbourhood.empty()) {
-                printf("(Ate my tail...)\n");
+                printf("(I ate my tail...)\n");
                 return best_solution;
             }
 
@@ -44,8 +60,6 @@ namespace mhe {
             if (get_solution_score(next_solution, graph) >= get_solution_score(best_solution, graph)) {
                 best_solution = next_solution;
             }
-
-            tabu_set.insert(next_solution);
         }
         return best_solution;
 

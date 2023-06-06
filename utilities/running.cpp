@@ -18,8 +18,12 @@ namespace mhe {
         graph_t graph = graph_t(problem_size);
         indicators_t problem = indicators_t(problem_size, true);
 
-        print(std::cout, "Problem", problem, graph);
+        std::string problem_title = "Problem";
+        print(std::cout, problem_title, problem, graph);
         print_graph_for_R(std::cout, problem, graph);
+//        print_graph_for_Graphviz(std::cout, problem, graph);
+
+//        problem = random_solution(problem, graph);
 
         std::vector<std::function<indicators_t(indicators_t &, graph_t &)>> solutions{
                 nullptr,
@@ -42,7 +46,7 @@ namespace mhe {
                 break;
             } else {
                 solution = solutions[solution_num](problem, graph);
-                print(std::cout, solutions_titles[solution_num], problem, graph);
+                print(std::cout, solutions_titles[solution_num], solution, graph);
             }
         }
     }
