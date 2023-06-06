@@ -1,6 +1,6 @@
 #include "generic_algorithm.h"
 #include "../functions/random_functions.h"
-#include "../functions/settings.h"
+#include "../functions/configuration.h"
 #include "../functions/printing.h"
 #include <cstdio>
 #include <random>
@@ -13,7 +13,7 @@ namespace mhe {
 
     indicators_t generic_algorithm(indicators_t &problem, const graph_t &graph) {
 
-        std::vector<indicators_t> population = get_initial_population(problem);
+        std::vector<indicators_t> population = get_initial_population(problem, graph);
 //        for (indicators_t p: population) {
 //            printf("%s\n", indicators_to_string(p).c_str());
 //        }
@@ -37,15 +37,15 @@ namespace mhe {
 // TODO elita
     }
 
-    std::vector<indicators_t> get_initial_population(indicators_t &problem) {
+    std::vector<indicators_t> get_initial_population(indicators_t &problem, graph_t graph) {
         std::vector<indicators_t> population;
         for (int i = 0; i < get_population_size(); i++) {
-            population.push_back(random_solution(problem));
+            population.push_back(random_solution(problem, graph));
         }
         return population;
     }
 
-    bool terminal_condition(int& iteration) {
+    bool terminal_condition(int &iteration) {
         iteration++;
         return iteration <= get_iterations();
     }

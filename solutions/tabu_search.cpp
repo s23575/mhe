@@ -1,5 +1,5 @@
 #include "tabu_search.h"
-#include "../functions/settings.h"
+#include "../functions/configuration.h"
 #include "../functions/neighbours.h"
 #include "../functions/printing.h"
 #include <set>

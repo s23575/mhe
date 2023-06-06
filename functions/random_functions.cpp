@@ -8,7 +8,7 @@ namespace rgen_random_solutions {
 
 namespace mhe {
 
-    indicators_t random_solution(indicators_t &problem) {
+    indicators_t random_solution(indicators_t &problem, graph_t &graph) {
         indicators_t solution = problem;
         std::uniform_int_distribution<int> distr(0, 1);
         for (auto &&i: solution) {

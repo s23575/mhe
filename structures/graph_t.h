@@ -10,7 +10,7 @@ namespace mhe {
         std::vector<int> vertices;
         std::vector<std::vector<bool>> edges;
 
-        explicit graph_t(int graph_size); // TODO co znaczy explicit?
+        explicit graph_t(int graph_size);
 
         void set_vertices(int size);
         void set_edges(int size);

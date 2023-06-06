@@ -1,5 +1,5 @@
 #include "indicators_t.h"
-#include "../functions/settings.h"
+#include "../functions/configuration.h"
 
 namespace mhe {
 

@@ -1,6 +1,6 @@
 // #include <cstdio>
 #include "hillclimb_solutions.h"
-#include "../functions/settings.h"
+#include "../functions/configuration.h"
 #include "../functions/random_functions.h"
 #include "../functions/neighbours.h"
 #include "../functions/printing.h"

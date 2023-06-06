@@ -1,6 +1,6 @@
 #include <random>
 #include "sim_annealing.h"
-#include "../functions/settings.h"
+#include "../functions/configuration.h"
 #include "../functions/random_functions.h"
 
 namespace rgen_sim_annealing {
@@ -10,7 +10,7 @@ namespace rgen_sim_annealing {
 
 namespace mhe {
 
-    indicators_t sim_annealing(indicators_t &problem, const graph_t &graph, std::function<double(int)> temp) {
+    indicators_t sim_annealing(indicators_t &problem, const graph_t &graph) {
         indicators_t solution = problem;
         indicators_t best_solution = solution;
         indicators_t best_solution_globally = solution;
@@ -19,15 +19,16 @@ namespace mhe {
             solution = random_modify(solution);
             if (get_solution_goal(solution, graph) >= get_solution_goal(best_solution, graph)) {
                 best_solution = solution;
-                if (get_solution_goal(best_solution, graph) >= get_solution_goal(best_solution_globally, graph)) {
+                if (get_solution_goal(best_solution, graph) >=
+                    get_solution_goal(best_solution_globally, graph)) {
                     best_solution_globally = best_solution;
                 }
             } else {
                 std::uniform_real_distribution<double> u(0.0, 0.1);
                 if (u(rgen_sim_annealing::rgen) <
                     std::exp(-std::abs
-                            (get_solution_goal(solution, graph) - get_solution_goal(best_solution, graph)) / temp(i)))
-                {
+                            (get_solution_goal(solution, graph) -
+                             get_solution_goal(best_solution, graph)) / get_sim_annealing_temp(i))) {
                     best_solution = solution;
                 }
             }
