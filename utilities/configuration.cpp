@@ -1,5 +1,6 @@
 #include "configuration.h"
 #include "printing.h"
+#include "../structures/solution_functions.h"
 
 #include <iostream>
 
@@ -7,17 +8,6 @@ namespace mhe {
 
     int problem_size;
     int iterations;
-
-    std::vector<std::string> solutions_titles = {
-            "0 - All of the listed",
-            "1 - Random solution",
-            "2 - Brute force",
-            "3 - Random hillclimb",
-            "4 - Deterministic hillclimb",
-            "5 - Tabu search",
-            "6 - Simulated annealing",
-            "7 - Generic algorithm"
-    };
 
     int tabu_size;
 
@@ -27,9 +17,12 @@ namespace mhe {
         find_parameter(parameters, "-p", problem_size);
         find_parameter(parameters, "-i", iterations);
 
-        auto parameter_iterator = std::find(parameters.begin(), parameters.end(), "-a");
+        auto parameter_iterator = std::find(parameters.begin(), parameters.end(), "-s");
         if (parameter_iterator != parameters.end()) {
-            auto parameter_iterator_tmp = std::find(parameters.begin(), parameters.end(), "-t");
+            auto parameter_iterator_tmp = std::find_if(parameter_iterator, parameters.end(),
+                                                       [&](std::string &p) {
+                                                           return (p == "-t" or p == "-p" or p == "-i");
+                                                       });
             std::transform(parameter_iterator + 1, parameter_iterator_tmp,
                            std::back_inserter(solutions_to_run),
                            [](const std::string &str) {
@@ -41,7 +34,13 @@ namespace mhe {
                            });
         } else { throw_parameters_error(); }
 
-        find_parameter(parameters, "-t", tabu_size);
+
+        if (std::find_if(solutions_to_run.begin(), solutions_to_run.end(),
+                         [&](int s) {
+                             return (s == 5 or s == 0);
+                         }) != solutions_to_run.end()) {
+            find_parameter(parameters, "-t", tabu_size);
+        }
 
         get_parameters(solutions_to_run);
 
@@ -74,7 +73,10 @@ namespace mhe {
             if (solutions_to_run.back() < 0 or solutions_to_run.back() > 7) throw_parameters_error();
         }
 
-        if (std::find(solutions_to_run.begin(), solutions_to_run.end(), 5) != solutions_to_run.end()) {
+        if (std::find_if(solutions_to_run.begin(), solutions_to_run.end(),
+                         [&](int s) {
+                             return (s == 5 or s == 0);
+                         }) != solutions_to_run.end()) {
             std::cout << "Provide tabu size (0 = unlimited size):\n";
             std::cin >> tabu_size;
         }
@@ -84,7 +86,7 @@ namespace mhe {
         return solutions_to_run;
     }
 
-    void find_parameter(std::vector<std::string> &parameters, std::string &parameter_to_find, int &variable) {
+    void find_parameter(std::vector<std::string> &parameters, std::string parameter_to_find, int &variable) {
         std::vector<std::string>::iterator parameter_iterator;
         parameter_iterator = std::find(parameters.begin(), parameters.end(), parameter_to_find);
         if (parameter_iterator != parameters.end()) {
@@ -95,7 +97,7 @@ namespace mhe {
 
     void get_parameters(std::vector<int> &solutions_to_run) {
 
-        if (problem_size <= 0 or iterations <= 0 or solutions_to_run.empty() or tabu_size < 0) throw_parameters_error();
+        if (problem_size < 2 or iterations < 1 or solutions_to_run.empty() or tabu_size < 0) throw_parameters_error();
 
         std::sort(solutions_to_run.begin(), solutions_to_run.end());
 

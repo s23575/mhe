@@ -40,7 +40,7 @@ namespace mhe {
     std::vector<indicators_t> get_initial_population(indicators_t &problem, graph_t graph) {
         std::vector<indicators_t> population;
         for (int i = 0; i < get_population_size(); i++) {
-            population.push_back(random_solution(problem, graph));
+            population.push_back(random_solution(problem));
         }
         return population;
     }

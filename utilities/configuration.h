@@ -13,15 +13,13 @@ namespace mhe {
     extern int iterations;
     extern int problem_size;
 
-    extern std::vector<std::string> solutions_titles;
-
     extern int tabu_size;
 
     std::vector<int> set_parameters_from_command_line(std::vector<std::string> &parameters);
 
     std::vector<int> set_parameters_from_standard_input();
 
-    void find_parameter(std::vector<std::string> &parameters, std::string &parameter_to_find, int &variable);
+    void find_parameter(std::vector<std::string> &parameters, std::string parameter_to_find, int &variable);
 
     void get_parameters(std::vector<int> &solutions_to_run);
 
@@ -29,7 +27,6 @@ namespace mhe {
 
     inline int get_population_size() { return problem_size ^ 2; }
 
-    inline double get_sim_annealing_temp(int k) { return 1000.0 / k; }
 } // mhe
 
 #endif //MHE_CONFIGURATION_H

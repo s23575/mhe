@@ -1,5 +1,6 @@
 #include "printing.h"
 #include "configuration.h"
+#include "..\structures\solution_functions.h"
 
 #include <iomanip>
 
@@ -25,7 +26,7 @@ namespace mhe {
     }
 
     std::ostream &print_graph(std::ostream &o, indicators_t &indicators, graph_t &graph) {
-        if (get_vertices_num(indicators, graph) <= 30) {
+        if (get_vertices_num(indicators) <= 30) {
             int vertex_size = static_cast<int>(std::to_string(indicators.size() - 1).length());
             o << left_indentation << "Graph: "
               << std::setw(vertex_size) << " " << " ";
@@ -49,9 +50,9 @@ namespace mhe {
 
     std::ostream &print_graph_data(std::ostream &o, indicators_t &indicators, graph_t &graph) {
         o << left_indentation << "Indicators: " << indicators_to_string(indicators) << "\n"
-          << left_indentation << "Vertices (num): " << get_vertices_num(indicators, graph) << "\n"
+          << left_indentation << "Vertices (num): " << get_vertices_num(indicators) << "\n"
           << left_indentation << "Edges (num): " << get_edges_num(indicators, graph) << "\n"
-          << left_indentation << "Max clique edges (num): " << get_k_edges_num(indicators, graph) << "\n"
+          << left_indentation << "Max clique edges (num): " << get_k_edges_num(indicators) << "\n"
           << left_indentation << "Score: " << get_solution_score(indicators, graph) << "\n\n";
         return o;
     }

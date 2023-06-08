@@ -32,10 +32,10 @@ namespace mhe {
             }
 
             indicators_t tabu_last_element = *tabu_iterator;
-            std::vector<indicators_t> neighbourhood = generate_neighbourhood(tabu_last_element, graph);
+            std::vector<indicators_t> neighbourhood = generate_neighbourhood(tabu_last_element);
 
-            std::cout << "Tabu last element: " << indicators_to_string(tabu_last_element) << "\n";
-            std::cout << "Tabu size: " << tabu_set.size() << "\n";
+//            std::cout << "Tabu last element: " << indicators_to_string(tabu_last_element) << "\n";
+//            std::cout << "Tabu size: " << tabu_set.size() << "\n";
 //            std::cout << "Tabu elements: " << indicators_to_string(tabu_last_element) << "\n";
 //            for (auto t : tabu_set) {
 //                std::cout << indicators_to_string(t) << "\n";

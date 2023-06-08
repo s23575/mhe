@@ -13,7 +13,7 @@ namespace mhe {
         indicators_t best_solution = solution;
         for (int i = 0; i < iterations; i++) {
             solution = random_modify(solution);
-            if (get_solution_score(solution, graph) > get_solution_score(best_solution, graph)) {
+            if (get_solution_score(solution, graph) >= get_solution_score(best_solution, graph)) {
                 best_solution = solution;
 //                std::cout << "Best solution: " << indicators_to_string(best_solution) << " Score: "
 //                          << get_solution_score(best_solution, graph) << "\n";
@@ -31,7 +31,7 @@ namespace mhe {
             solution = best_neighbour(solution, graph);
 //            std::cout << "Best neighbour: " << indicators_to_string(solution) << " Score: "
 //                      << get_solution_score(solution, graph) << "\n";
-            if (get_solution_score(solution, graph) > get_solution_score(best_solution, graph)) {
+            if (get_solution_score(solution, graph) >= get_solution_score(best_solution, graph)) {
                 best_solution = solution;
 //                std::cout << "\nBest solution: " << indicators_to_string(best_solution) << " Score: "
 //                          << get_solution_score(best_solution, graph) << "\n";

@@ -2,18 +2,14 @@
 #include "configuration.h"
 #include "printing.h"
 #include "../functions/random_functions.h"
-#include "../solutions/brute_force.h"
-#include "../solutions/hillclimb_solutions.h"
-#include "../solutions/tabu_search.h"
 #include "../solutions/sim_annealing.h"
-#include "../solutions/generic_algorithm.h"
+#include "../structures/solution_functions.h"
 
 #include <iostream>
-#include <functional>
 
 namespace mhe {
 
-    void run(const std::vector<int> &solutions_to_run) {
+    void run(std::vector<int> &solutions_to_run) {
 
         graph_t graph = graph_t(problem_size);
         indicators_t problem = indicators_t(problem_size, true);
@@ -23,31 +19,26 @@ namespace mhe {
         print_graph_for_R(std::cout, problem, graph);
 //        print_graph_for_Graphviz(std::cout, problem, graph);
 
-//        problem = random_solution(problem, graph);
-
-        std::vector<std::function<indicators_t(indicators_t &, graph_t &)>> solutions{
-                nullptr,
-                random_solution,
-                brute_force,
-                hillclimb_random,
-                hillclimb_deterministic,
-                tabu_search,
-                sim_annealing,
-                generic_algorithm,
-        };
+        problem = random_solution(problem);
 
         indicators_t solution;
-        for (auto solution_num: solutions_to_run) {
-            if (solution_num == 0) {
-                for (int i = 1; i < solutions.size(); i++) {
-                    solution = solutions[i](problem, graph);
-                    print(std::cout, solutions_titles[i], solution, graph);
-                }
-                break;
-            } else {
-                solution = solutions[solution_num](problem, graph);
-                print(std::cout, solutions_titles[solution_num], solution, graph);
+
+        solution_t t(sim_annealing);
+
+        if (solutions_to_run[0] == 0) {
+            solutions_to_run.clear();
+            for (int i = 1; i < solutions.size(); i++) {
+                solutions_to_run.push_back(i);
             }
+        }
+
+        for (auto solution_num: solutions_to_run) {
+            if (solution_num == 1) solution = solutions[solution_num].function_one_param(problem);
+            else if (solution_num == 6)
+                solution = solutions[solution_num].function_three_params(problem, graph,
+                                                                         [](int k) { return 1000.0 / k; });
+            else solution = solutions[solution_num].function_two_params(problem, graph);
+            print(std::cout, solutions_titles[solution_num], solution, graph);
         }
     }
 

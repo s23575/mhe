@@ -13,16 +13,16 @@ namespace mhe {
         return edges_num;
     }
 
-    int get_vertices_num(const indicators_t &indicators, const graph_t &graph) {
+    int get_vertices_num(const indicators_t &indicators) {
         return static_cast<int>(std::count(indicators.begin(), indicators.end(), true));
     }
 
-    int get_k_edges_num(const indicators_t &indicators, const graph_t &graph) {
-        return k_edges(get_vertices_num(indicators, graph));
+    int get_k_edges_num(const indicators_t &indicators) {
+        return k_edges(get_vertices_num(indicators));
     }
 
     double get_solution_score(const indicators_t &indicators, const graph_t &graph) {
-        return score(get_vertices_num(indicators, graph), get_k_edges_num(indicators, graph),
+        return score(get_vertices_num(indicators), get_k_edges_num(indicators),
                      get_edges_num(indicators, graph));
     }
 

@@ -5,7 +5,7 @@
 
 namespace mhe {
 
-    std::vector<indicators_t> generate_neighbourhood(indicators_t &current_solution, graph_t &graph);
+    std::vector<indicators_t> generate_neighbourhood(indicators_t &current_solution);
 
     indicators_t best_neighbour(indicators_t &current_solution, graph_t& graph);
 

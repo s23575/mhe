@@ -11,9 +11,9 @@ namespace mhe {
 
     int get_edges_num(const indicators_t &indicators, const graph_t &graph);
 
-    int get_vertices_num(const indicators_t &indicators, const graph_t &graph);
+    int get_vertices_num(const indicators_t &indicators);
 
-    int get_k_edges_num(const indicators_t &indicators, const graph_t &graph);
+    int get_k_edges_num(const indicators_t &indicators);
 
     double get_solution_score(const indicators_t &indicators, const graph_t &graph);
 

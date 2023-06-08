@@ -34,7 +34,7 @@ namespace mhe {
                 else edges[i][j] = static_cast<bool>(distr(rgen_graph_t::rgen));
             }
 //        } while (get_edges_num(size) < (size - 1));
-        } while (get_edges_num(indicators, *this) < get_k_edges_num(indicators, *this) * 3 / 4);
+        } while (get_edges_num(indicators, *this) < get_k_edges_num(indicators) * 3 / 4);
     }
 
 } // mhe
