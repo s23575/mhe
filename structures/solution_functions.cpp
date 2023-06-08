@@ -23,6 +23,10 @@ namespace mhe {
         this->function_three_params = std::move(function);
     }
 
+    solution_t::solution_t(std::function<indicators_t(indicators_t &, graph_t &, int, int, int)> function) {
+        this->function_more_params = std::move(function);
+    }
+
     std::vector<solution_t> solutions = {
             solution_t(),
             solution_t(random_solution),

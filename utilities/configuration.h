@@ -25,8 +25,6 @@ namespace mhe {
 
     void throw_parameters_error();
 
-    inline int get_population_size() { return problem_size ^ 2; }
-
 } // mhe
 
 #endif //MHE_CONFIGURATION_H

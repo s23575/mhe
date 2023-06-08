@@ -3,12 +3,9 @@
 
 #include <vector>
 
-
 namespace mhe {
 
-
     void run(std::vector<int> &solutions_to_run);
-
 
 } // mhe
 

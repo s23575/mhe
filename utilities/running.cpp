@@ -37,6 +37,8 @@ namespace mhe {
             else if (solution_num == 6)
                 solution = solutions[solution_num].function_three_params(problem, graph,
                                                                          [](int k) { return 1000.0 / k; });
+            else if (solution_num == 7)
+                solution = solutions[solution_num].function_more_params(problem, graph, 1, 0, 0);
             else solution = solutions[solution_num].function_two_params(problem, graph);
             print(std::cout, solutions_titles[solution_num], solution, graph);
         }
