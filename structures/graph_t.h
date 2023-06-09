@@ -10,11 +10,11 @@ namespace mhe {
         std::vector<int> vertices;
         std::vector<std::vector<bool>> edges;
 
-        explicit graph_t(int graph_size);
+        graph_t(const int &graph_size);
 
-        void set_vertices(int size);
+        void set_vertices(const int &size);
 
-        void set_edges(int size);
+        void set_edges(const int &size);
 
     };
 } // mhe

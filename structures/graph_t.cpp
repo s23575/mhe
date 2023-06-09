@@ -10,17 +10,17 @@ namespace rgen_graph_t {
 
 namespace mhe {
 
-    graph_t::graph_t(int graph_size) {
+    graph_t::graph_t(const int &graph_size) {
         this->
                 set_vertices(graph_size),
                 set_edges(graph_size);
     }
 
-    void graph_t::set_vertices(int size) {
+    void graph_t::set_vertices(const int &size) {
         for (int i = 0; i < size; i++) vertices.push_back(i);
     }
 
-    void graph_t::set_edges(int size) {
+    void graph_t::set_edges(const int &size) {
         edges.resize(size, std::vector<bool>());
         indicators_t indicators = std::vector<bool>(size, true);
 

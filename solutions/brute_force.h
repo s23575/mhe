@@ -5,7 +5,7 @@
 
 namespace mhe {
 
-    indicators_t brute_force(indicators_t &problem, const graph_t& graph);
+    indicators_t brute_force(const indicators_t &problem, const graph_t& graph);
 
 } // mhe
 

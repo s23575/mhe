@@ -8,9 +8,9 @@
 
 namespace mhe {
 
-    indicators_t hillclimb_random(indicators_t &problem, graph_t& graph);
+    indicators_t hillclimb_random(const indicators_t &problem, const graph_t &graph);
 
-    indicators_t hillclimb_deterministic(indicators_t &problem, graph_t& graph);
+    indicators_t hillclimb_deterministic(const indicators_t &problem, const graph_t &graph);
 
 } // mhe
 

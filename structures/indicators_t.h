@@ -21,9 +21,9 @@ namespace mhe {
 
     double get_max_score();
 
-    double score(int vertices_num, int k_edges_num, int edges_num);
+    double score(const int &vertices_num, const int &k_edges_num, const int &edges_num);
 
-    int k_edges(int vertices);
+    int k_edges(const int &vertices);
 } // mhe
 
 #endif //MHE_INDICATORS_T_H

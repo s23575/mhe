@@ -9,9 +9,9 @@
 
 namespace mhe {
 
-    indicators_t tabu_search(indicators_t &problem, graph_t &graph) {
+    indicators_t tabu_search(const indicators_t &problem, const graph_t &graph) {
 
-        const indicators_t& solution = problem;
+        const indicators_t &solution = problem;
         indicators_t best_solution = solution;
 
         std::set<indicators_t> tabu_set;
@@ -54,7 +54,8 @@ namespace mhe {
 
             next_solution = *std::max_element(neighbourhood.begin(), neighbourhood.end(),
                                               [&](auto l, auto r) {
-                                                  return get_solution_score(l, graph) < get_solution_score(r, graph);
+                                                  return get_solution_score(l, graph) <
+                                                         get_solution_score(r, graph);
                                               });
 
             if (get_solution_score(next_solution, graph) >= get_solution_score(best_solution, graph)) {

@@ -9,13 +9,13 @@ namespace mhe {
     const int left_indentation_size = 24;
     const auto left_indentation = std::setw(left_indentation_size);
 
-    std::ostream &print_config(std::ostream &o, std::vector<int> &solutions_to_run) {
+    std::ostream &print_config(std::ostream &o, const std::vector<int> &solutions_to_run) {
         o << "\n" << "* * * Configuration * * *" << "\n\n"
           << left_indentation << "Problem size: " << problem_size << "\n"
           << left_indentation << "Iterations: " << iterations << "\n"
           << left_indentation << "Selected solution: ";
 
-        for (auto solution_num: solutions_to_run) {
+        for (const auto &solution_num: solutions_to_run) {
             if (solution_num != solutions_to_run.at(0)) o << left_indentation << " ";
             o << solutions_titles[solution_num] << "\n";
         }
@@ -25,15 +25,19 @@ namespace mhe {
         return o;
     }
 
-    std::ostream &print_graph(std::ostream &o, indicators_t &indicators, graph_t &graph) {
+    std::ostream &print_graph(std::ostream &o, const indicators_t &indicators, const graph_t &graph) {
+
         if (get_vertices_num(indicators) <= 30) {
+
             int vertex_size = static_cast<int>(std::to_string(indicators.size() - 1).length());
             o << left_indentation << "Graph: "
               << std::setw(vertex_size) << " " << " ";
+
             for (int i = 0; i < indicators.size(); i++) {
                 if (indicators[i]) o << std::setw(vertex_size) << graph.vertices[i] << " ";
             }
             o << "\n";
+
             for (int i = 0; i < indicators.size(); i++) {
                 if (indicators[i]) {
                     o << left_indentation << " "
@@ -45,10 +49,11 @@ namespace mhe {
                 }
             }
         }
+
         return o;
     }
 
-    std::ostream &print_graph_data(std::ostream &o, indicators_t &indicators, graph_t &graph) {
+    std::ostream &print_graph_data(std::ostream &o, const indicators_t &indicators, const graph_t &graph) {
         o << left_indentation << "Indicators: " << indicators_to_string(indicators) << "\n"
           << left_indentation << "Vertices (num): " << get_vertices_num(indicators) << "\n"
           << left_indentation << "Edges (num): " << get_edges_num(indicators, graph) << "\n"
@@ -57,7 +62,7 @@ namespace mhe {
         return o;
     }
 
-    std::ostream &print_graph_for_R(std::ostream &o, indicators_t &indicators, graph_t &graph) {
+    std::ostream &print_graph_for_R(std::ostream &o, const indicators_t &indicators, const graph_t &graph) {
         o << "\n" << "g <- graph_from_literal(";
 
         for (int i = 0; i < indicators.size(); i++) {
@@ -75,7 +80,7 @@ namespace mhe {
         return o;
     }
 
-    std::ostream &print_graph_for_Graphviz(std::ostream &o, indicators_t &indicators, graph_t &graph) {
+    std::ostream &print_graph_for_Graphviz(std::ostream &o, const indicators_t &indicators, const graph_t &graph) {
         o << "\n" << "graph {";
 
         for (int i = 0; i < indicators.size(); i++) {
@@ -93,7 +98,7 @@ namespace mhe {
         return o;
     }
 
-    std::ostream &print(std::ostream &o, std::string &title, indicators_t &indicators, graph_t &graph) {
+    std::ostream &print(std::ostream &o, const std::string &title, const indicators_t &indicators, const graph_t &graph) {
         o << "\n" << "* * * " << title << " * * *" << "\n\n";
         print_graph(o, indicators, graph);
         print_graph_data(o, indicators, graph);
@@ -101,9 +106,9 @@ namespace mhe {
         return o;
     }
 
-    std::string indicators_to_string(indicators_t &indicators) {
+    std::string indicators_to_string(const indicators_t &indicators) {
         std::string indicators_string;
-        for (auto indicator: indicators) indicators_string += to_string(indicator) + " ";
+        for (auto indicator: indicators) indicators_string += std::to_string(indicator) + " ";
         return indicators_string;
     }
 } // mhe

@@ -11,7 +11,7 @@ namespace rgen_sim_annealing {
 
 namespace mhe {
 
-    indicators_t sim_annealing(indicators_t &problem, graph_t &graph, std::function<double(int)> temp) {
+    indicators_t sim_annealing(const indicators_t &problem, const graph_t &graph, std::function<double(int)> temp) {
         indicators_t solution = problem;
         indicators_t best_solution = solution;
         indicators_t best_solution_globally = solution;

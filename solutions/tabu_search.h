@@ -5,7 +5,7 @@
 
 namespace mhe {
 
-    indicators_t tabu_search(indicators_t &problem, graph_t& graph);
+    indicators_t tabu_search(const indicators_t &problem, const graph_t &graph);
 
 } // mhe40
 

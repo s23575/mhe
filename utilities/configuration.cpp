@@ -14,36 +14,42 @@ namespace mhe {
     std::vector<int> set_parameters_from_command_line(std::vector<std::string> &parameters) {
         std::vector<int> solutions_to_run;
 
-        find_parameter(parameters, "-p", problem_size);
-        find_parameter(parameters, "-i", iterations);
+        if (find_parameter(parameters, "-h") == 1) {
+            get_help();
+        } else {
+            problem_size = find_parameter(parameters, "-p");
+            iterations = find_parameter(parameters, "-i");
 
-        auto parameter_iterator = std::find(parameters.begin(), parameters.end(), "-s");
-        if (parameter_iterator != parameters.end()) {
-            auto parameter_iterator_tmp = std::find_if(parameter_iterator, parameters.end(),
-                                                       [&](std::string &p) {
-                                                           return (p == "-t" or p == "-p" or p == "-i");
-                                                       });
-            std::transform(parameter_iterator + 1, parameter_iterator_tmp,
-                           std::back_inserter(solutions_to_run),
-                           [](const std::string &str) {
-                               int solution_number;
-                               try { solution_number = std::stoi(str); }
-                               catch (const std::exception &) { throw_parameters_error(); }
-                               if (solution_number < 0 or solution_number > 7) throw_parameters_error();
-                               return solution_number;
-                           });
-        } else { throw_parameters_error(); }
+            auto parameter_iterator = std::find(parameters.begin(), parameters.end(), "-s");
+            if (parameter_iterator != parameters.end()) {
+
+                auto parameter_iterator_tmp = std::find_if(parameter_iterator, parameters.end(),
+                                                           [](std::string &p) {
+                                                               return (p == "-t" or p == "-p" or p == "-i");
+                                                           });
+
+                std::transform(parameter_iterator + 1, parameter_iterator_tmp,
+                               std::back_inserter(solutions_to_run),
+                               [](const std::string &str) {
+                                   int solution_number;
+                                   try { solution_number = std::stoi(str); }
+                                   catch (const std::exception &) { throw_parameters_error(); }
+                                   if (solution_number < 0 or solution_number > 7) throw_parameters_error();
+                                   return solution_number;
+                               });
+
+            } else { throw_parameters_error(); }
 
 
-        if (std::find_if(solutions_to_run.begin(), solutions_to_run.end(),
-                         [&](int s) {
-                             return (s == 5 or s == 0);
-                         }) != solutions_to_run.end()) {
-            find_parameter(parameters, "-t", tabu_size);
+            if (std::find_if(solutions_to_run.begin(), solutions_to_run.end(),
+                             [&](int s) {
+                                 return (s == 5 or s == 0);
+                             }) != solutions_to_run.end()) {
+                tabu_size = find_parameter(parameters, "-t");
+            }
+
+            get_parameters(solutions_to_run);
         }
-
-        get_parameters(solutions_to_run);
-
         return solutions_to_run;
     }
 
@@ -58,7 +64,7 @@ namespace mhe {
 
         std::cout << "\nChoose solution(s) by providing specific number (or numbers after Enter):\n";
         for (const auto &s: solutions_titles) std::cout << s << "\n";
-        std::cout << "(Insert Enter twice to stop)\n";
+        std::cout << "(Insert Enter twice to stop.)\n";
 
         std::cin.ignore();
         std::string input_line;
@@ -86,13 +92,21 @@ namespace mhe {
         return solutions_to_run;
     }
 
-    void find_parameter(std::vector<std::string> &parameters, std::string parameter_to_find, int &variable) {
-        std::vector<std::string>::iterator parameter_iterator;
-        parameter_iterator = std::find(parameters.begin(), parameters.end(), parameter_to_find);
+    int find_parameter(std::vector<std::string> &parameters, const std::string &parameter_to_find) {
+        int variable = 0;
+        auto parameter_iterator = std::find(parameters.begin(), parameters.end(), parameter_to_find);
+
         if (parameter_iterator != parameters.end()) {
-            try { variable = std::stoi(parameters[(parameter_iterator - parameters.begin()) + 1]); }
-            catch (const std::exception &) { throw_parameters_error(); }
-        } else { throw_parameters_error(); }
+            if (parameter_to_find == "-h") variable = 1;
+            else {
+                try { variable = std::stoi(*(parameter_iterator + 1)); }
+                catch (const std::exception &) { throw_parameters_error(); }
+            }
+        } else {
+            if (parameter_to_find == "-h") variable = 0;
+            else throw_parameters_error();
+        }
+        return variable;
     }
 
     void get_parameters(std::vector<int> &solutions_to_run) {
@@ -105,8 +119,17 @@ namespace mhe {
     }
 
     void throw_parameters_error() {
-        std::cerr << "Error! Try to provide parameters once again..."; // TODO: Help
+        std::cerr << "Error! Try to provide parameters once again...";
         std::exit(1);
+    }
+
+    void get_help() {
+        std::cout << "Provide parameters to run the program - try to find the largest clique in a graph:\n"
+                  << "-p" << "\t" << "size of the problem (graph) to solve\n"
+                  << "-i" << "\t" << "number of iterations to solve the problem\n"
+                  << "-s" << "\t" << "solutions to be applied to the problem:\n";
+        for (const auto &s: solutions_titles) std::cout << "\t" << s << "\n";
+        std::cout << "-t" << "\t" << "tabu size (if applies)\n";
     }
 
 } // mhe

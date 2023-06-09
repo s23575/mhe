@@ -15,15 +15,15 @@ namespace mhe {
         std::function<indicators_t(indicators_t &, graph_t &, std::function<double(int)>)> function_three_params;
         std::function<indicators_t(indicators_t &, graph_t &, int, int, int)> function_more_params;
 
-        explicit solution_t();
+        solution_t();
 
-        explicit solution_t(std::function<indicators_t(indicators_t &)>);
+        solution_t(std::function<indicators_t(indicators_t &)>);
 
-        explicit solution_t(std::function<indicators_t(indicators_t &, graph_t &)>);
+        solution_t(std::function<indicators_t(indicators_t &, graph_t &)>);
 
-        explicit solution_t(std::function<indicators_t(indicators_t &, graph_t &, std::function<double(int)>)>);
+        solution_t(std::function<indicators_t(indicators_t &, graph_t &, std::function<double(int)>)>);
 
-        explicit solution_t(std::function<indicators_t(indicators_t &, graph_t &, int, int, int)>);
+        solution_t(std::function<indicators_t(indicators_t &, graph_t &, int, int, int)>);
     };
 
     extern std::vector<solution_t> solutions;

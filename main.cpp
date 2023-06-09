@@ -9,17 +9,17 @@ int main(int argc, char *argv[]) {
 
     std::vector<int> solutions_to_run;
 
-    if (int{argc} == 1) {
+    if (argc == 1) {
         solutions_to_run = set_parameters_from_standard_input();
     } else {
+        // -h
         // -p 20 -i 2048 -s 3 4 5 6 -t 20
         // -s 3 4 5 6 -t 30 -p 20 -i 2048
-        std::vector<std::string> parameters;
-        std::copy(argv + 1, argv + argc, std::back_inserter(parameters));
+        std::vector<std::string> parameters(argv + 1, argv + argc);
         solutions_to_run = set_parameters_from_command_line(parameters);
     }
 
-    run(solutions_to_run);
+    if (!solutions_to_run.empty()) run(solutions_to_run);
 
     return 0;
 }

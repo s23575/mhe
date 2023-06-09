@@ -7,7 +7,7 @@
 
 namespace mhe {
 
-    indicators_t sim_annealing(indicators_t &problem, graph_t &graph, std::function<double(int)> temp);
+    indicators_t sim_annealing(const indicators_t &problem, const graph_t &graph, std::function<double(int)> temp);
 
 } // mhe
 

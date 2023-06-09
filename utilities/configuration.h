@@ -19,11 +19,13 @@ namespace mhe {
 
     std::vector<int> set_parameters_from_standard_input();
 
-    void find_parameter(std::vector<std::string> &parameters, std::string parameter_to_find, int &variable);
+    int find_parameter(std::vector<std::string> &parameters, const std::string &parameter_to_find);
 
     void get_parameters(std::vector<int> &solutions_to_run);
 
     void throw_parameters_error();
+
+    void get_help();
 
 } // mhe
 

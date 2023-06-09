@@ -39,13 +39,13 @@ namespace mhe {
     };
 
     std::vector<std::string> solutions_titles = {
-            "0 - All of the listed",
-            "1 - Random solution",
-            "2 - Brute force",
-            "3 - Random hillclimb",
-            "4 - Deterministic hillclimb",
-            "5 - Tabu search",
-            "6 - Simulated annealing",
-            "7 - Generic algorithm"
+            "0\t- all of the listed below",
+            "1\t- random solution",
+            "2\t- brute force",
+            "3\t- random hillclimb",
+            "4\t- deterministic hillclimb",
+            "5\t- tabu search",
+            "6\t- simulated annealing",
+            "7\t- generic algorithm"
     };
 } // mhe

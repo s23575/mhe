@@ -5,11 +5,11 @@
 
 namespace mhe {
 
-    indicators_t random_solution(indicators_t &problem);
+    indicators_t random_solution(const indicators_t &problem);
 
-    indicators_t random_modify(indicators_t &current_solution);
+    indicators_t random_modify(const indicators_t &current_solution);
 
-    indicators_t random_modify_normal_dist(indicators_t &current_solution, graph_t &graph);
+    indicators_t random_modify_normal_dist(const indicators_t &current_solution, const graph_t &graph);
 
 } // mhe
 

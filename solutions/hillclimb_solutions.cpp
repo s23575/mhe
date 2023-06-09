@@ -8,9 +8,10 @@
 
 namespace mhe {
 
-    indicators_t hillclimb_random(indicators_t &problem, graph_t &graph) {
+    indicators_t hillclimb_random(const indicators_t &problem, const graph_t &graph) {
         indicators_t solution = problem;
         indicators_t best_solution = solution;
+
         for (int i = 0; i < iterations; i++) {
             solution = random_modify(solution);
             if (get_solution_score(solution, graph) >= get_solution_score(best_solution, graph)) {
@@ -19,14 +20,16 @@ namespace mhe {
 //                          << get_solution_score(best_solution, graph) << "\n";
             }
         }
+
         return best_solution;
     }
 
-    indicators_t hillclimb_deterministic(indicators_t &problem, graph_t &graph) {
+    indicators_t hillclimb_deterministic(const indicators_t &problem, const graph_t &graph) {
         indicators_t solution = problem;
 //        std::cout << "\nSolution: " << indicators_to_string(solution) << " Score: "
 //                  << get_solution_score(solution, graph) << "\n";
         indicators_t best_solution = solution;
+
         for (int i = 0; i < iterations; i++) {
             solution = best_neighbour(solution, graph);
 //            std::cout << "Best neighbour: " << indicators_to_string(solution) << " Score: "
@@ -37,6 +40,7 @@ namespace mhe {
 //                          << get_solution_score(best_solution, graph) << "\n";
             }
         }
+
         return best_solution;
     }
 

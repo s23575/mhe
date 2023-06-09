@@ -34,11 +34,13 @@ namespace mhe {
         return problem_size * 1000;
     }
 
-    double score(int vertices_num, int k_edges_num, int edges_num) {
-        return (vertices_num * 1000 * (double) edges_num / (double) k_edges_num) - ((k_edges_num - edges_num) * 1000);
+    double score(const int &vertices_num, const int &k_edges_num, const int &edges_num) {
+        return (vertices_num * 1000 * (double) edges_num / (double) k_edges_num) - ((k_edges_num - edges_num) * 500);
+//        return (vertices_num * 1000 * (double) edges_num / (double) k_edges_num) - ((k_edges_num - edges_num) * 1000);
+//        return (vertices_num * 1000 * (double) edges_num);
     }
 
-    int k_edges(int vertices) {
+    int k_edges(const int &vertices) {
         return ((vertices) * (vertices - 1)) / 2;
     }
 

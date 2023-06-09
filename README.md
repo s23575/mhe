@@ -19,24 +19,3 @@ wykładniczym. Efektywny algorytm dla rozwiązania problemu kliki najprawodpodob
 
 Przygotowano w oparciu o: T. H. Carmen, C. E. Leiserson, R. L. Rivest, C. Stein, _Wprowadzenie do algorytmów_, tłum. K,
 Diks, A. Malinowski, D. Roszkowska i W. Rytter, wyd. VII, Warszawa 2021.
-
-[Wskazanie, dlaczego stosuje się metaheurystyki]
-[brak liniowości]
-[brak wypukłości]
-[brak różniczkowalności]
-
-[Funkcja celu: liczba wierzchołków "każdy z każdym"]
-
-[Brutalna siła: policzenie wierzchołków "każdy z każdym" w każdym podzbiorze (2^n)]
-
-[Algorytm wspinaczkowy: sąsiedztwo: zamiana dwóch wierzchołków w losowo wybranym podzbiorze]
-
-[Prezentacja podzbioru przy pomocy funkcji charakterystycznej]
-
-[Prezentacja grafu w formie macierzy]
-
-[Krawędzie]
-
-[Dwa możliwe rozwiązania: wielkość kliki lub najmniejszy podzbiór o wielkości kliki]
-
-## Źródła
