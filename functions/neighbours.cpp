@@ -11,12 +11,12 @@ namespace mhe {
 
         for (int i = 0; i < current_solution.size(); i++) {
             neighbour[i].flip();
-//            std::cout << "Neighbour: " << indicators_to_string(neighbour) << " Score: "
-//                      << get_solution_score(neighbour, graph) << "\n";
+//            std::cout << "Neighbour: " << indicators_to_string(neighbour) << "\n";
             if (get_vertices_num(neighbour) > 1) {
                 neighbourhood.push_back(neighbour);
             }
         }
+//        std::cout << "\n";
 
         return neighbourhood;
     }
