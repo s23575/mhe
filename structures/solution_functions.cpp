@@ -18,15 +18,6 @@ namespace mhe {
         this->function_two_params = std::move(function);
     }
 
-    solution_t::solution_t(
-            std::function<indicators_t(indicators_t &, graph_t &, std::function<double(int)>)> function) {
-        this->function_three_params = std::move(function);
-    }
-
-    solution_t::solution_t(std::function<indicators_t(indicators_t &, graph_t &, int, int, int)> function) {
-        this->function_more_params = std::move(function);
-    }
-
     std::vector<solution_t> solutions = {
             solution_t(),
             solution_t(random_solution),
@@ -39,13 +30,13 @@ namespace mhe {
     };
 
     std::vector<std::string> solutions_titles = {
-            "0\t- all of the listed below",
+            "0\t- all of the listed",
             "1\t- random solution",
             "2\t- brute force",
             "3\t- random hillclimb",
             "4\t- deterministic hillclimb",
             "5\t- tabu search",
             "6\t- simulated annealing",
-            "7\t- generic algorithm"
+            "7\t- genetic algorithm"
     };
 } // mhe

@@ -2,7 +2,7 @@
 
 namespace mhe {
 
-    indicators_t brute_force(const indicators_t &problem, const graph_t& graph) {
+    indicators_t brute_force(const indicators_t &problem, const graph_t &graph) {
         indicators_t solution = problem;
         indicators_t best_solution = solution;
 

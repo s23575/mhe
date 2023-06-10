@@ -11,9 +11,7 @@ namespace rgen_genetic_algorithm {
 
 namespace mhe {
 
-    indicators_t genetic_algorithm(const indicators_t &problem, const graph_t &graph, const int &terminal_opt,
-                                   const int &crossover_opt,
-                                   const int &mutation_bit_num) {
+    indicators_t genetic_algorithm(const indicators_t &problem, const graph_t &graph) {
 
         int iteration = 0;
         double specimen_score = 0;
@@ -32,15 +30,15 @@ namespace mhe {
 //                std::cout << fitnesses.back() << "\n";
             }
 
-            if (terminal_condition(terminal_opt, iteration, best_specimen_score)) {
+            if (terminal_condition(iteration, best_specimen_score)) {
                 break;
             }
 
             std::vector<indicators_t> elite = get_elite(population, graph);
             std::vector<indicators_t> parents = selection(fitnesses, population);
             parents.insert(parents.end(), elite.begin(), elite.end());
-            std::vector<indicators_t> offsprings = crossover(parents, crossover_opt);
-            offsprings = mutation(offsprings, mutation_bit_num);
+            std::vector<indicators_t> offsprings = crossover(parents);
+            offsprings = mutation(offsprings);
             population = offsprings;
         }
 
@@ -59,16 +57,19 @@ namespace mhe {
         return population;
     }
 
-    bool terminal_condition(const int &terminal_opt, int &iteration, const double &best_specimen_score) {
-        if (terminal_opt == 1) {
-            if (((int) best_specimen_score) % 1000 == 0 and best_specimen_score > (get_max_score() / 2)) {
+    bool terminal_condition(int &iteration, const double &best_specimen_score) {
+        if (terminal_opt > 0) {
+            if (((int) best_specimen_score) % 1000 == 0 and best_specimen_score > (get_max_score() / terminal_opt)) {
                 std::cout << "(Solution good enough!)" << "\n";
                 return true;
             }
         }
         iteration++;
-//        return iteration > iterations;
-        return iteration > (iterations / 2);
+//        std::cout << iteration << "\n";
+
+        // return iteration > iterations;
+        // return iteration > (sqrt(iterations));
+        return iteration > (sqrt(iterations));
     }
 
     double fitness(double specimen_score) {
@@ -96,15 +97,17 @@ namespace mhe {
         std::vector<indicators_t> selected_population;
         while (selected_population.size() < population.size()) {
             std::uniform_int_distribution<int> dist(0, static_cast<int>(population.size() - 1));
+
             int a_idx = dist(rgen_genetic_algorithm::rgen);
             int b_idx = dist(rgen_genetic_algorithm::rgen);
+
             if (fitnesses[a_idx] >= fitnesses[b_idx]) selected_population.push_back(population[a_idx]);
             else selected_population.push_back(population[b_idx]);
         }
         return selected_population;
     }
 
-    std::vector<indicators_t> crossover(const std::vector<indicators_t> &population, const int &crossover_opt) {
+    std::vector<indicators_t> crossover(const std::vector<indicators_t> &population) {
 //        std::cout << "Parents: " << "\n";
 //        for (indicators_t p: population) {
 //            std::cout << indicators_to_string(p) << "\n";
@@ -115,8 +118,7 @@ namespace mhe {
 //            std::cout << "Parents: \n" << indicators_to_string(population[i]) << "\n"
 //                      << indicators_to_string(population[i + 1]) << "\n";
             auto [a, b] = crossover_pair(population[i],
-                                         population[(i + 1) % population.size()],
-                                         crossover_opt);
+                                         population[(i + 1) % population.size()]);
 //            std::cout << "Offsprings: \n" << indicators_to_string(a) << "\n"
 //                      << indicators_to_string(b) << "\n";
             offsprings.push_back(a);
@@ -131,8 +133,7 @@ namespace mhe {
         return offsprings;
     }
 
-    std::pair<indicators_t, indicators_t> crossover_pair(const indicators_t &parent_a, const indicators_t &parent_b,
-                                                         const int &crossover_opt) {
+    std::pair<indicators_t, indicators_t> crossover_pair(const indicators_t &parent_a, const indicators_t &parent_b) {
 
         indicators_t offspring_a;
         indicators_t offspring_b;
@@ -161,7 +162,7 @@ namespace mhe {
         return {offspring_a, offspring_b};
     }
 
-    std::vector<indicators_t> mutation(std::vector<indicators_t> population, int mutation_bit_num) {
+    std::vector<indicators_t> mutation(std::vector<indicators_t> population) {
         if (mutation_bit_num < 1) mutation_bit_num = 1;
         if (mutation_bit_num > problem_size) mutation_bit_num = problem_size;
 
@@ -171,7 +172,7 @@ namespace mhe {
 //        }
 
         std::transform(population.begin(), population.end(), population.begin(),
-                       [mutation_bit_num](auto s) {
+                       [](auto s) {
 //                           std::cout << "Before mutation: " << indicators_to_string(s) << "\n";
                            for (int i = 0; i < mutation_bit_num; i++) s = random_modify(s);
 //                           std::cout << "After mutation:  " << indicators_to_string(s) << "\n";

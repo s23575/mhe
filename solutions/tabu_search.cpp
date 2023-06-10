@@ -11,12 +11,12 @@ namespace mhe {
 
     indicators_t tabu_search(const indicators_t &problem, const graph_t &graph) {
 
-        const indicators_t &solution = problem;
+        indicators_t solution = problem;
         indicators_t best_solution = solution;
 
         std::set<indicators_t> tabu_set;
         std::set<indicators_t>::iterator tabu_iterator;
-        std::queue<std::set<indicators_t>::iterator> tabu_iterators_queue;
+        std::queue<std::set<indicators_t>::iterator> tabu_iterators;
 
         indicators_t next_solution = solution;
 
@@ -24,10 +24,10 @@ namespace mhe {
             tabu_iterator = tabu_set.insert(next_solution).first;
 
             if (tabu_size > 0) {
-                tabu_iterators_queue.push(tabu_iterator);
-                if (tabu_iterators_queue.size() > tabu_size) {
-                    tabu_set.erase(tabu_iterators_queue.front());
-                    tabu_iterators_queue.pop();
+                tabu_iterators.push(tabu_iterator);
+                if (tabu_iterators.size() > tabu_size) {
+                    tabu_set.erase(tabu_iterators.front());
+                    tabu_iterators.pop();
                 }
             }
 

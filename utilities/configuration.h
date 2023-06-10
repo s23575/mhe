@@ -12,8 +12,13 @@ namespace mhe {
 
     extern int iterations;
     extern int problem_size;
+    extern std::string filename;
 
     extern int tabu_size;
+    extern int temp_func;
+    extern int terminal_opt;
+    extern int crossover_opt;
+    extern int mutation_bit_num;
 
     std::vector<int> set_parameters_from_command_line(std::vector<std::string> &parameters);
 
@@ -26,6 +31,8 @@ namespace mhe {
     void throw_parameters_error();
 
     void get_help();
+
+    bool get_options_for_solution(const std::vector<int> &solutions_to_run, const int &sol);
 
 } // mhe
 

@@ -20,7 +20,11 @@ namespace mhe {
             o << solutions_titles[solution_num] << "\n";
         }
 
-        o << left_indentation << "Tabu size (if applies): " << tabu_size << "\n";
+        o << left_indentation << "Tabu size: " << tabu_size << "\t(if applies)\n"
+          << left_indentation << "Temperature function: " << temp_func << "\t(if applies)\n"
+          << left_indentation << "Terminal condition: " << terminal_opt << "\t(if applies)\n"
+          << left_indentation << "Crossover method: " << crossover_opt << "\t(if applies)\n"
+          << left_indentation << "Alleles to change: " << mutation_bit_num << "\t(if applies)\n";
 
         return o;
     }
@@ -75,7 +79,7 @@ namespace mhe {
                 }
             }
         }
-        o << graph.vertices[0] << "--" << graph.vertices[0] << ")" << "\n";
+        o << graph.vertices[0] << "--" << graph.vertices[0] << ")" << "\n\n";
 
         return o;
     }
@@ -93,12 +97,13 @@ namespace mhe {
                 }
             }
         }
-        o << graph.vertices[0] << "--" << graph.vertices[0] << "}" << "\n";
+        o << graph.vertices[0] << "--" << graph.vertices[0] << "}" << "\n\n";
 
         return o;
     }
 
-    std::ostream &print(std::ostream &o, const std::string &title, const indicators_t &indicators, const graph_t &graph) {
+    std::ostream &print(std::ostream &o, const std::string &title, const indicators_t &indicators,
+                        const graph_t &graph) {
         o << "\n" << "* * * " << title << " * * *" << "\n\n";
         print_graph(o, indicators, graph);
         print_graph_data(o, indicators, graph);

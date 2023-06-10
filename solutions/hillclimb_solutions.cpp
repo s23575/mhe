@@ -2,7 +2,6 @@
 #include "../utilities/configuration.h"
 #include "../functions/random_functions.h"
 #include "../functions/neighbours.h"
-#include "../utilities/printing.h"
 
 #include <iostream>
 
