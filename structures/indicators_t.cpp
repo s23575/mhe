@@ -35,8 +35,8 @@ namespace mhe {
     }
 
     double score(const int &vertices_num, const int &k_edges_num, const int &edges_num) {
-        return (vertices_num * 1000 * (double) edges_num / (double) k_edges_num) - ((k_edges_num - edges_num) * 500);
-//        return (vertices_num * 1000 * (double) edges_num / (double) k_edges_num) - ((k_edges_num - edges_num) * 1000);
+        return (vertices_num * 1000 * (double) edges_num / (double) k_edges_num) - ((k_edges_num - edges_num) * 1000);
+//        return (vertices_num * 1000 * (double) edges_num / (double) k_edges_num) - ((k_edges_num - edges_num) * 500);
 //        return (vertices_num * 1000 * (double) edges_num);
     }
 

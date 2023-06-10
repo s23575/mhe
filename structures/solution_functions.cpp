@@ -4,7 +4,7 @@
 #include "../solutions/tabu_search.h"
 #include "../solutions/brute_force.h"
 #include "../solutions/sim_annealing.h"
-#include "../solutions/generic_algorithm.h"
+#include "../solutions/genetic_algorithm.h"
 
 namespace mhe {
 
@@ -35,7 +35,7 @@ namespace mhe {
             solution_t(hillclimb_deterministic),
             solution_t(tabu_search),
             solution_t(sim_annealing),
-            solution_t(generic_algorithm)
+            solution_t(genetic_algorithm)
     };
 
     std::vector<std::string> solutions_titles = {

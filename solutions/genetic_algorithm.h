@@ -1,5 +1,5 @@
-#ifndef MHE_GENERIC_ALGORITHM_H
-#define MHE_GENERIC_ALGORITHM_H
+#ifndef MHE_GENETIC_ALGORITHM_H
+#define MHE_GENETIC_ALGORITHM_H
 
 #include "../structures/indicators_t.h"
 #include "../utilities/configuration.h"
@@ -8,7 +8,7 @@
 
 namespace mhe {
 
-    indicators_t generic_algorithm(const indicators_t &problem, const graph_t &graph, const int &terminal_opt,
+    indicators_t genetic_algorithm(const indicators_t &problem, const graph_t &graph, const int &terminal_opt,
                                    const int &crossover_opt, const int &mutation_bit_num);
 
     std::vector<indicators_t> get_initial_population(const indicators_t &problem);
@@ -17,7 +17,10 @@ namespace mhe {
 
     double fitness(double specimen_score);
 
-    std::vector<indicators_t> selection(const std::vector<double> &fitnesses, const std::vector<indicators_t> &population);
+    std::vector<indicators_t> get_elite(std::vector<indicators_t> &population, const graph_t &graph);
+
+    std::vector<indicators_t> selection(const std::vector<double> &fitnesses,
+                                        const std::vector<indicators_t> &population);
 
     std::vector<indicators_t> crossover(const std::vector<indicators_t> &population, const int &crossover_opt);
 
@@ -31,4 +34,4 @@ namespace mhe {
 
 } // mhe
 
-#endif //MHE_GENERIC_ALGORITHM_H
+#endif //MHE_GENETIC_ALGORITHM_H
